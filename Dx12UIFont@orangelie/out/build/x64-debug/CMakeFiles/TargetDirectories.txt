@@ -1,0 +1,5 @@
+C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/CMakeFiles/edit_cache.dir
+C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/CMakeFiles/CMakeTarget.dir
+C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/CMakeFiles/edit_cache.dir
+C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/CMakeFiles/rebuild_cache.dir
