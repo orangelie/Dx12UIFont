@@ -69,40 +69,65 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 # =============================================================================
 
 # =============================================================================
-# Object build statements for EXECUTABLE target CMakeTarget
+# Object build statements for EXECUTABLE target ZekrosEngine
 
 
 #############################################
-# Order-only phony target for CMakeTarget
+# Order-only phony target for ZekrosEngine
 
-build cmake_object_order_depends_target_CMakeTarget: phony || Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir
+build cmake_object_order_depends_target_ZekrosEngine: phony || Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
 
-build Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir\main.cpp.obj: CXX_COMPILER__CMakeTarget_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\main.cpp || cmake_object_order_depends_target_CMakeTarget
+build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\main.cpp.obj: CXX_COMPILER__ZekrosEngine_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\main.cpp || cmake_object_order_depends_target_ZekrosEngine
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir
-  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir
-  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir\
-  TARGET_PDB = Dx12UIFont@orangelie\CMakeTarget.pdb
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\ZekrosEngine -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
+
+build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Dependencies\DDSTextureLoader.cpp.obj: CXX_COMPILER__ZekrosEngine_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Dependencies\DDSTextureLoader.cpp || cmake_object_order_depends_target_ZekrosEngine
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\ZekrosEngine -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Dependencies
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
+
+build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Renderer.cpp.obj: CXX_COMPILER__ZekrosEngine_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Renderer.cpp || cmake_object_order_depends_target_ZekrosEngine
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\ZekrosEngine -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
+
+build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Utils.cpp.obj: CXX_COMPILER__ZekrosEngine_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Utils.cpp || cmake_object_order_depends_target_ZekrosEngine
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\ZekrosEngine -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target CMakeTarget
+# Link build statements for EXECUTABLE target ZekrosEngine
 
 
 #############################################
-# Link the executable Dx12UIFont@orangelie\CMakeTarget.exe
+# Link the executable Dx12UIFont@orangelie\ZekrosEngine.exe
 
-build Dx12UIFont@orangelie\CMakeTarget.exe: CXX_EXECUTABLE_LINKER__CMakeTarget_Debug Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir\main.cpp.obj
+build Dx12UIFont@orangelie\ZekrosEngine.exe: CXX_EXECUTABLE_LINKER__ZekrosEngine_Debug Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Utils.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
-  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\CMakeTarget.dir\
-  TARGET_FILE = Dx12UIFont@orangelie\CMakeTarget.exe
-  TARGET_IMPLIB = Dx12UIFont@orangelie\CMakeTarget.lib
-  TARGET_PDB = Dx12UIFont@orangelie\CMakeTarget.pdb
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
+  TARGET_FILE = Dx12UIFont@orangelie\ZekrosEngine.exe
+  TARGET_IMPLIB = Dx12UIFont@orangelie\ZekrosEngine.lib
+  TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
 
 
 #############################################
@@ -130,9 +155,9 @@ build Dx12UIFont@orangelie\rebuild_cache: phony Dx12UIFont@orangelie\CMakeFiles\
 # =============================================================================
 # Target aliases.
 
-build CMakeTarget: phony Dx12UIFont@orangelie\CMakeTarget.exe
+build ZekrosEngine: phony Dx12UIFont@orangelie\ZekrosEngine.exe
 
-build CMakeTarget.exe: phony Dx12UIFont@orangelie\CMakeTarget.exe
+build ZekrosEngine.exe: phony Dx12UIFont@orangelie\ZekrosEngine.exe
 
 # =============================================================================
 # Folder targets.
@@ -149,7 +174,7 @@ build all: phony Dx12UIFont@orangelie\all
 #############################################
 # Folder: C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie
 
-build Dx12UIFont@orangelie\all: phony Dx12UIFont@orangelie\CMakeTarget.exe
+build Dx12UIFont@orangelie\all: phony Dx12UIFont@orangelie\ZekrosEngine.exe
 
 # =============================================================================
 # Built-in targets

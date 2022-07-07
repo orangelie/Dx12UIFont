@@ -1,4 +1,14 @@
 # ninja log v5
-1	724	6788335945292785	Dx12UIFont@orangelie/CMakeFiles/CMakeTarget.dir/main.cpp.obj	548d228514f01c90
-1	731	6788336172503020	Dx12UIFont@orangelie/CMakeFiles/CMakeTarget.dir/main.cpp.obj	548d228514f01c90
-733	1059	6788336175722260	Dx12UIFont@orangelie/CMakeTarget.exe	6db42a1adb5ba5a8
+14	337	6789001268147092	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Utils.cpp.obj	572ca48b716f8d0
+5	1220	6789001276939958	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Dependencies/DDSTextureLoader.cpp.obj	18836f6ef29c5716
+8	1254	6789001277306975	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/main.cpp.obj	b1abd273048a5535
+1	1259	6789001277365039	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Renderer.cpp.obj	f6840216ee3c9093
+1259	1596	6789001280640200	Dx12UIFont@orangelie/ZekrosEngine.exe	684f0d6eed337f19
+5	1105	6789001985554977	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Renderer.cpp.obj	f6840216ee3c9093
+0	1110	6789001985581239	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/main.cpp.obj	b1abd273048a5535
+1110	1310	6789001987255458	Dx12UIFont@orangelie/ZekrosEngine.exe	684f0d6eed337f19
+1	927	6789002067991561	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Renderer.cpp.obj	f6840216ee3c9093
+928	1139	6789002069773232	Dx12UIFont@orangelie/ZekrosEngine.exe	684f0d6eed337f19
+0	1061	6789002583961182	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Renderer.cpp.obj	f6840216ee3c9093
+5	1079	6789002584139626	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Utils.cpp.obj	572ca48b716f8d0
+1079	1301	6789002585929250	Dx12UIFont@orangelie/ZekrosEngine.exe	684f0d6eed337f19
