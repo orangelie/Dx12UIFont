@@ -10,6 +10,7 @@ namespace orangelie
 		static Renderer* gGameApp;
 
 		CLASSIFICATION_H(Renderer);
+		static LRESULT MessageHandler(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam);
 
 		void Initialize(UINT screenWidth, UINT screenHeight);
 		void Render();
@@ -20,12 +21,16 @@ namespace orangelie
 
 	private:
 		void BuildWindows(UINT screenWidth, UINT screenHeight);
+		void BuildDxgiAndD3D12(UINT screenWidth, UINT screenHeight);
 
 	private:
 		LPCSTR mWndClassName = "orangelieApp";
 		HWND mHwnd;
 		HINSTANCE mModuleHandle;
 		UINT mFullscreenWidth, mFullscreenHeight, mClientWidth, mClientHeight;
+
+		
+		Microsoft::WRL::ComPtr<ID3D12Device> mDevice = nullptr;
 
 	};
 }

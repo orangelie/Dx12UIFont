@@ -9,9 +9,21 @@ namespace orangelie
 			gGameApp = this;
 		});
 
+	LRESULT Renderer::MessageHandler(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam)
+	{
+		switch (hMessage)
+		{
+		case WM_DESTROY: case WM_CLOSE:
+			PostQuitMessage(0); return 0;
+		}
+
+		return DefWindowProc(hWnd, hMessage, wParam, lParam);
+	}
+
 	void Renderer::Initialize(UINT screenWidth, UINT screenHeight)
 	{
 		BuildWindows(screenWidth, screenHeight);
+		BuildDxgiAndD3D12(screenWidth, screenHeight);
 	}
 
 	void Renderer::Render()
@@ -95,15 +107,17 @@ namespace orangelie
 		ShowCursor(TRUE);
 		UpdateWindow(mHwnd);
 	}
+
+	void Renderer::BuildDxgiAndD3D12(UINT screenWidth, UINT screenHeight)
+	{
+		// < Device >
+		HR(D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(mDevice.GetAddressOf())));
+
+		//mDevice->CreateCommandList()
+	}
 }
 
 LRESULT __stdcall WindowProcedure(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam)
 {
-	switch (hMessage)
-	{
-	case WM_DESTROY: case WM_CLOSE:
-		PostQuitMessage(0); return 0;
-	}
-
-	return DefWindowProc(hWnd, hMessage, wParam, lParam);
+	return orangelie::Renderer::MessageHandler(hWnd, hMessage, wParam, lParam);
 }
