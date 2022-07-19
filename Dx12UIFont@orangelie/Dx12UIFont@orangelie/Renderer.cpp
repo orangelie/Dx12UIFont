@@ -13,6 +13,63 @@ namespace orangelie
 	{
 		switch (hMessage)
 		{
+		case WM_ACTIVATE:
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				mGameTimer.Stop();
+			}
+			else {
+				mGameTimer.Start();
+			}
+			return 0;
+
+		case WM_SIZE:
+			mClientWidth = LOWORD(lParam);
+			mClientHeight = HIWORD(lParam);
+
+			if (wParam == SIZE_MINIMIZED)
+			{
+				mIsMinimized = true;
+				mIsMaximized = false;
+			}
+			else if (wParam == SIZE_MAXIMIZED)
+			{
+				mIsMinimized = false;
+				mIsMaximized = true;
+				// Resize;
+			}
+			else if (wParam == SIZE_RESTORED)
+			{
+				if (mIsMinimized)
+				{
+					mIsMinimized = false;
+					mIsMaximized = false;
+					// Resize;
+				}
+				else if(mIsMaximized)
+				{
+					mIsMinimized = false;
+					mIsMaximized = false;
+					// Resize;
+				}
+				else if (mIsResizing)
+				{
+
+				}
+			}
+
+			return 0;
+
+		case WM_ENTERSIZEMOVE:
+			mGameTimer.Stop();
+			mIsResizing = true;
+			return 0;
+
+		case WM_EXITSIZEMOVE:
+			mGameTimer.Start();
+			mIsResizing = false;
+			return 0;
+
 		case WM_DESTROY: case WM_CLOSE:
 			PostQuitMessage(0); return 0;
 		}
@@ -29,6 +86,7 @@ namespace orangelie
 	void Renderer::Render()
 	{
 		MSG msg = {};
+		mGameTimer.Reset();
 
 		for (;;)
 		{
@@ -42,11 +100,13 @@ namespace orangelie
 			{
 				break;
 			}
+			else
+			{
+				mGameTimer.Tick();
 
-			
-
-			update(0.1f);
-			draw(0.1f);
+				update(mGameTimer.DeltaTime());
+				draw(mGameTimer.DeltaTime());
+			}
 		}
 	}
 
@@ -119,5 +179,5 @@ namespace orangelie
 
 LRESULT __stdcall WindowProcedure(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam)
 {
-	return orangelie::Renderer::MessageHandler(hWnd, hMessage, wParam, lParam);
+	return orangelie::Renderer::gGameApp->MessageHandler(hWnd, hMessage, wParam, lParam);
 }

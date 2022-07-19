@@ -9,7 +9,7 @@ namespace orangelie
 	protected:
 		virtual void update(float dt) override
 		{
-			
+
 		}
 
 		virtual void draw(float dt) override
@@ -21,7 +21,6 @@ namespace orangelie
 		
 
 	private:
-		
 
 	};
 }
