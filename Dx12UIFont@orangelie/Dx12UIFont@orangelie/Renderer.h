@@ -12,30 +12,58 @@ namespace orangelie
 		static Renderer* gGameApp;
 
 		CLASSIFICATION_H(Renderer);
-		LRESULT MessageHandler(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam);
+		virtual LRESULT MessageHandler(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam);
 
-		void Initialize(UINT screenWidth, UINT screenHeight);
+		void Initialize(HINSTANCE hInstance, UINT screenWidth, UINT screenHeight);
 		void Render();
 
-	protected:
-		virtual void update(float dt) = 0;
-		virtual void draw(float dt) = 0;
-
 	private:
-		void BuildWindows(UINT screenWidth, UINT screenHeight);
+		void BuildWindows(HINSTANCE hInstance, UINT screenWidth, UINT screenHeight);
 		void BuildDxgiAndD3D12(UINT screenWidth, UINT screenHeight);
+		void OnResize(UINT screenWidth, UINT screenHeight);
 
 	private:
 		GameTimer mGameTimer;
 
-		LPCSTR mWndClassName = "orangelieApp";
+		LPCWSTR mWndClassName = L"orangelieApp";
+
 		HWND mHwnd;
 		HINSTANCE mModuleHandle;
 		UINT mFullscreenWidth, mFullscreenHeight, mClientWidth, mClientHeight;
-		bool mIsResizing, mIsMinimized, mIsMaximized;
+		bool mIsResizing = false, mIsMinimized = false, mIsMaximized = false, mIsEnginePaused = false;
 
 		
+		UINT mRtvSize, mDsvSize, mCbvSrvUavSize;
+		Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory4 = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Fence> mFence = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvDescriptorHeap = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvDescriptorHeap = nullptr;
+
+	protected:
+		const static UINT gBackBufferCount = 2;
+		const static DXGI_FORMAT gBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		const static DXGI_FORMAT gDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		UINT64 mCurrFenceCount = 0;
+
+		void FlushCommandList();
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle();
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle();
+
+		virtual void update(float dt) = 0;
+		virtual void draw(float dt) = 0;
+
 		Microsoft::WRL::ComPtr<ID3D12Device> mDevice = nullptr;
+		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mGraphicsCommandList = nullptr;
+
+		UINT mCurrBackBufferIndex;
+		Microsoft::WRL::ComPtr<ID3D12Resource> mBackBuffer[gBackBufferCount];
+		Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer = nullptr;
+
+		D3D12_RECT mScissorRect;
+		D3D12_VIEWPORT mViewPort;
 
 	};
 }

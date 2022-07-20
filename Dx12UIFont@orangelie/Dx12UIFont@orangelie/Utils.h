@@ -12,6 +12,7 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <cassert>
 
 #include <Windows.h>
 #include <windowsx.h>
@@ -38,4 +39,10 @@ n::~n() {}
 		std::string err = std::string(__FILE__) + std::string(__FUNCTION__) + std::to_string(__LINE__); \
 		throw std::runtime_error(err); \
 	} \
+}
+
+template <class _Tp>
+_Tp& unmove(_Tp&& __value)
+{
+	return __value;
 }

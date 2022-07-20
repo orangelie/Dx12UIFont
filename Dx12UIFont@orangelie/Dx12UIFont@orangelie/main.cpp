@@ -7,11 +7,16 @@ int __stdcall WinMain(
 	_In_ INT hCmdShow
 )
 {
+
+#if defined(DEBUG) || defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
 	try
 	{
 		std::unique_ptr<orangelie::Renderer> appRenderer(new orangelie::Dx12UIFont);
 
-		appRenderer->Initialize(1080, 860);
+		appRenderer->Initialize(hInstance, 1080, 860);
 		appRenderer->Render();
 
 	}

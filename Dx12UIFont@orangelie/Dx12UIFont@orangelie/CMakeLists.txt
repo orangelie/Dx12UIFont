@@ -6,6 +6,6 @@ set(UTILITIES "Utils.cpp" "Utils.h")
 set(DXGI_RENDERER "Renderer.cpp" "Renderer.h")
 set(GAMETIMER "GameTimer.h" "GameTimer.cpp")
 
-add_executable (ZekrosEngine "main.cpp" "Dx12UIFont.h" ${DEPENDENCIES} ${DXGI_RENDERER} ${UTILITIES} ${GAMETIMER})
+add_executable (ZekrosEngine "main.cpp" "Dx12UIFont.h" ${DEPENDENCIES} ${UTILITIES} ${DXGI_RENDERER} ${GAMETIMER})
 
 include_directories(ZekrosEngine "./Dependencies")
