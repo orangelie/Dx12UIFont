@@ -100,6 +100,7 @@ namespace orangelie
 
 		BuildWindows(hInstance, screenWidth, screenHeight);
 		BuildDxgiAndD3D12(screenWidth, screenHeight);
+		init();
 	}
 
 	void Renderer::Render()

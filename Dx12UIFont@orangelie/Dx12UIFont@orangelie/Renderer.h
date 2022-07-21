@@ -49,6 +49,7 @@ namespace orangelie
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle();
 		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle();
 
+		virtual void init() = 0;
 		virtual void update(float dt) = 0;
 		virtual void draw(float dt) = 0;
 

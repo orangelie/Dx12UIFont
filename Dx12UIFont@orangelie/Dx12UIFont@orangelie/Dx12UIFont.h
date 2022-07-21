@@ -6,7 +6,39 @@ namespace orangelie
 {
 	class Dx12UIFont : public Renderer
 	{
+	private:
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SrvHeap = nullptr;
+
+		void BuildTexture()
+		{
+
+		}
+
+		void BuildDescriptor()
+		{
+			D3D12_DESCRIPTOR_HEAP_DESC srvHeapDescriptor = {};
+			srvHeapDescriptor.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+			srvHeapDescriptor.NodeMask = 0;
+			srvHeapDescriptor.NumDescriptors = 1;
+			srvHeapDescriptor.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+
+			HR(mDevice->CreateDescriptorHeap(&srvHeapDescriptor, IID_PPV_ARGS(SrvHeap.GetAddressOf())));
+
+			D3D12_SHADER_RESOURCE_VIEW_DESC srViewDescriptor = {};
+			srViewDescriptor.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+			srViewDescriptor.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+		}
+
 	protected:
+		virtual void init() override
+		{
+			BuildTexture();
+			BuildDescriptor();
+
+
+		}
+
 		virtual void update(float dt) override
 		{
 
@@ -45,11 +77,5 @@ namespace orangelie
 
 			FlushCommandList();
 		}
-
-	public:
-		
-
-	private:
-
 	};
 }
