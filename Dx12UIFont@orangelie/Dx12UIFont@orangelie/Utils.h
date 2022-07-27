@@ -17,10 +17,12 @@
 #include <Windows.h>
 #include <windowsx.h>
 #include <wrl.h>
+#include <wincodec.h>
 
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <dxgi1_4.h>
+#include <DDSTextureLoader.h>
 
 #define CLASSIFICATION_H(n) n(); \
 n(const n&) = delete; \
@@ -41,8 +43,38 @@ n::~n() {}
 	} \
 }
 
+struct Texture
+{
+    std::string name;
+    std::wstring fileName;
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> ResourceGpuHeap;
+    Microsoft::WRL::ComPtr<ID3D12Resource> UploadGpuHeap;
+};
+
 template <class _Tp>
 _Tp& unmove(_Tp&& __value)
 {
 	return __value;
+}
+
+namespace WICConverter
+{
+    // get the dxgi format equivilent of a wic format
+    DXGI_FORMAT GetDXGIFormatFromWICFormat(WICPixelFormatGUID& wicFormatGUID);
+
+    // get a dxgi compatible wic format from another wic format
+    WICPixelFormatGUID GetConvertToWICFormat(WICPixelFormatGUID& wicFormatGUID);
+
+    // get the number of bits per pixel for a dxgi format
+    int GetDXGIFormatBitsPerPixel(DXGI_FORMAT& dxgiFormat);
+
+    // load and decode image from file
+    int LoadImageDataFromFile(BYTE** imageData, D3D12_RESOURCE_DESC& resourceDescription, LPCWSTR filename, int& bytesPerRow);
+
+    HRESULT CreateWICTextureFromFile12(_In_ ID3D12Device* device,
+        _In_ ID3D12GraphicsCommandList* cmdList,
+        _In_z_ const wchar_t* szFileName,
+        _Out_ Microsoft::WRL::ComPtr<ID3D12Resource>& texture,
+        _Out_ Microsoft::WRL::ComPtr<ID3D12Resource>& textureUploadHeap);
 }

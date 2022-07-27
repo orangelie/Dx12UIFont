@@ -7,13 +7,37 @@ namespace orangelie
 	class Dx12UIFont : public Renderer
 	{
 	private:
+		std::unordered_map<std::string, std::unique_ptr<Texture>> mTextures;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SrvHeap = nullptr;
 
 		void BuildTexture()
 		{
+			auto tempTexture = std::make_unique<Texture>();
+			tempTexture->name = "text";
+			tempTexture->fileName = L"Text.png";
 
+			HR(WICConverter::CreateWICTextureFromFile12(mDevice.Get(),
+				mGraphicsCommandList.Get(),
+				tempTexture->fileName.c_str(),
+				tempTexture->ResourceGpuHeap,
+				tempTexture->UploadGpuHeap));
+
+			mTextures[tempTexture->name] = std::move(tempTexture);
+
+			/*
+			HR(DirectX::CreateDDSTextureFromFile12(mDevice.Get(),
+				mGraphicsCommandList.Get(),
+				tempTexture->fileName.c_str(),
+				tempTexture->ResourceGpuHeap,
+				tempTexture->UploadGpuHeap));
+			*/
 		}
 
+		void BuildRootSignature()
+		{
+
+		}
+		 
 		void BuildDescriptor()
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC srvHeapDescriptor = {};
@@ -23,10 +47,24 @@ namespace orangelie
 			srvHeapDescriptor.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
 			HR(mDevice->CreateDescriptorHeap(&srvHeapDescriptor, IID_PPV_ARGS(SrvHeap.GetAddressOf())));
+			CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(SrvHeap->GetCPUDescriptorHandleForHeapStart());
 
 			D3D12_SHADER_RESOURCE_VIEW_DESC srViewDescriptor = {};
 			srViewDescriptor.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 			srViewDescriptor.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srViewDescriptor.Texture2D.MostDetailedMip = 0;
+			srViewDescriptor.Texture2D.ResourceMinLODClamp = 0.0f;
+			
+			auto textTexture = mTextures["text"].get()->ResourceGpuHeap;
+			srViewDescriptor.Format = textTexture->GetDesc().Format;
+			srViewDescriptor.Texture2D.MipLevels = textTexture->GetDesc().MipLevels;
+
+			mDevice->CreateShaderResourceView(textTexture.Get(), &srViewDescriptor, srvHandle);
+			srvHandle.Offset(1, mCbvSrvUavSize);
+		}
+
+		void BuildShadersAndInputLayout()
+		{
 
 		}
 
@@ -34,8 +72,9 @@ namespace orangelie
 		virtual void init() override
 		{
 			BuildTexture();
+			BuildRootSignature();
 			BuildDescriptor();
-
+			BuildShadersAndInputLayout();
 
 		}
 

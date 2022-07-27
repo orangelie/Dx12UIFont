@@ -33,7 +33,6 @@ namespace orangelie
 		bool mIsResizing = false, mIsMinimized = false, mIsMaximized = false, mIsEnginePaused = false;
 
 		
-		UINT mRtvSize, mDsvSize, mCbvSrvUavSize;
 		Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory4 = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12Fence> mFence = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvDescriptorHeap = nullptr;
@@ -44,6 +43,7 @@ namespace orangelie
 		const static DXGI_FORMAT gBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 		const static DXGI_FORMAT gDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		UINT64 mCurrFenceCount = 0;
+		UINT mRtvSize, mDsvSize, mCbvSrvUavSize;
 
 		void FlushCommandList();
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle();
