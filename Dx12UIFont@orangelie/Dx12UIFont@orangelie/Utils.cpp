@@ -1,5 +1,125 @@
 #include "Utils.h"
 
+const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers()
+{
+    CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+        0,
+        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC pointClamp(
+        1,
+        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC linearWrap(
+        2,
+        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC linearClamp(
+        3,
+        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
+        4,
+        D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        0.0f,
+        16);
+
+    CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
+        5,
+        D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        0.0f,
+        16);
+
+    return {
+        pointWrap, pointClamp,
+        linearWrap, linearClamp,
+        anisotropicWrap, anisotropicClamp
+    };
+}
+
+namespace Utils
+{
+    Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultResource(
+        ID3D12Device* device,
+        ID3D12GraphicsCommandList* cmdList,
+        const void* data,
+        size_t size,
+        Microsoft::WRL::ComPtr<ID3D12Resource>& uploadHeap)
+    {
+        Microsoft::WRL::ComPtr<ID3D12Resource> defaultHeap = nullptr;
+
+        HR(device->CreateCommittedResource(&unmove(CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT)), D3D12_HEAP_FLAG_NONE,
+            &unmove(CD3DX12_RESOURCE_DESC::Buffer(size)), D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(defaultHeap.GetAddressOf())));
+        HR(device->CreateCommittedResource(&unmove(CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD)), D3D12_HEAP_FLAG_NONE,
+            &unmove(CD3DX12_RESOURCE_DESC::Buffer(size)), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(uploadHeap.GetAddressOf())));
+
+        D3D12_SUBRESOURCE_DATA subResourceData = {};
+        subResourceData.pData = data;
+        subResourceData.RowPitch = (LONG_PTR)size;
+        subResourceData.SlicePitch = subResourceData.RowPitch;
+
+        cmdList->ResourceBarrier(1, &unmove(CD3DX12_RESOURCE_BARRIER::Transition(defaultHeap.Get(),
+            D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST)));
+        UpdateSubresources<1>(cmdList, defaultHeap.Get(), uploadHeap.Get(), 0, 0, 1, &subResourceData);
+        cmdList->ResourceBarrier(1, &unmove(CD3DX12_RESOURCE_BARRIER::Transition(defaultHeap.Get(),
+            D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ)));
+
+        return defaultHeap;
+    }
+
+    Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(
+        const std::wstring& filename,
+        const D3D_SHADER_MACRO* macro,
+        const std::string& entryPoint,
+        const std::string& target)
+    {
+        UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#if defined(DEBUG) || defined(_DEBUG)
+        compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+        Microsoft::WRL::ComPtr<ID3DBlob> ppCode = nullptr, ppErrorMsgs = nullptr;
+
+        HR(D3DCompileFromFile(filename.c_str(), macro, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+            entryPoint.c_str(), target.c_str(), compileFlags, 0, ppCode.GetAddressOf(), ppErrorMsgs.GetAddressOf()));
+
+        if (ppErrorMsgs != nullptr)
+        {
+            MessageBoxA(0, (char*)ppErrorMsgs->GetBufferPointer(), "Compiler Error", MB_OK);
+            return nullptr;
+        }
+
+        return ppCode;
+    }
+}
+
 namespace WICConverter
 {
     // get the dxgi format equivilent of a wic format

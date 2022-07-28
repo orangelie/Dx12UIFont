@@ -13,12 +13,15 @@
 #include <unordered_map>
 #include <algorithm>
 #include <cassert>
+#include <array>
 
 #include <Windows.h>
 #include <windowsx.h>
 #include <wrl.h>
 #include <wincodec.h>
 
+#include <d3dcommon.h>
+#include <d3dcompiler.h>
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <dxgi1_4.h>
@@ -56,6 +59,24 @@ template <class _Tp>
 _Tp& unmove(_Tp&& __value)
 {
 	return __value;
+}
+
+const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+
+namespace Utils
+{
+    Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultResource(
+        ID3D12Device* device,
+        ID3D12GraphicsCommandList* cmdList,
+        const void* data,
+        size_t size,
+        Microsoft::WRL::ComPtr<ID3D12Resource>& uploadHeap);
+
+    Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(
+        const std::wstring& filename,
+        const D3D_SHADER_MACRO* macro,
+        const std::string& entryPoint,
+        const std::string& target);
 }
 
 namespace WICConverter

@@ -8,7 +8,10 @@ namespace orangelie
 	{
 	private:
 		std::unordered_map<std::string, std::unique_ptr<Texture>> mTextures;
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SrvHeap = nullptr;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
+		std::unordered_map<std::string, D3D12_INPUT_ELEMENT_DESC> mInputLayouts;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignatrue = nullptr;
 
 		void BuildTexture()
 		{
@@ -35,7 +38,30 @@ namespace orangelie
 
 		void BuildRootSignature()
 		{
+			CD3DX12_DESCRIPTOR_RANGE srvRange;
+			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0);
 
+			CD3DX12_ROOT_PARAMETER rootParameter;
+			rootParameter.InitAsDescriptorTable(1, &srvRange, D3D12_SHADER_VISIBILITY_PIXEL);
+
+			auto staticSamplers = GetStaticSamplers();
+
+			CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescriptor = {};
+			rootSignatureDescriptor.Init(1, &rootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+			Microsoft::WRL::ComPtr<ID3DBlob> ppBlob, ppErrorMsg;
+			HR(D3D12SerializeRootSignature(&rootSignatureDescriptor,
+				D3D_ROOT_SIGNATURE_VERSION_1, ppBlob.GetAddressOf(), ppErrorMsg.GetAddressOf()));
+
+			if (ppErrorMsg != nullptr)
+			{
+				MessageBoxA(0, (char*)ppErrorMsg->GetBufferPointer(), "RootSignature Error", MB_OK);
+				throw std::runtime_error("RootSignature Throws");
+			}
+
+			HR(mDevice->CreateRootSignature(0,
+				ppBlob->GetBufferPointer(), ppBlob->GetBufferSize(), IID_PPV_ARGS(mRootSignatrue.GetAddressOf())));
 		}
 		 
 		void BuildDescriptor()
@@ -46,8 +72,8 @@ namespace orangelie
 			srvHeapDescriptor.NumDescriptors = 1;
 			srvHeapDescriptor.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-			HR(mDevice->CreateDescriptorHeap(&srvHeapDescriptor, IID_PPV_ARGS(SrvHeap.GetAddressOf())));
-			CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(SrvHeap->GetCPUDescriptorHandleForHeapStart());
+			HR(mDevice->CreateDescriptorHeap(&srvHeapDescriptor, IID_PPV_ARGS(mSrvHeap.GetAddressOf())));
+			CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(mSrvHeap->GetCPUDescriptorHandleForHeapStart());
 
 			D3D12_SHADER_RESOURCE_VIEW_DESC srViewDescriptor = {};
 			srViewDescriptor.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -65,17 +91,41 @@ namespace orangelie
 
 		void BuildShadersAndInputLayout()
 		{
+			D3D_SHADER_MACRO shaderMacro[] =
+			{
+				"SHADER", "0",
+				NULL, NULL
+			};
+
+			mShaders["vs"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "VS", "vs_5_1");
+			mShaders["ps"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "PS", "ps_5_1");
+
+			mInputLayouts["layout1"] = {
+				"POSITION", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+			};
+		}
+
+		void BuildQuadMesh()
+		{
 
 		}
 
 	protected:
 		virtual void init() override
 		{
+			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
+
 			BuildTexture();
 			BuildRootSignature();
 			BuildDescriptor();
 			BuildShadersAndInputLayout();
+			BuildQuadMesh();
 
+			HR(mGraphicsCommandList->Close());
+			ID3D12CommandList* cmdLists[] = { mGraphicsCommandList.Get() };
+			mCommandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists);
+
+			FlushCommandList();
 		}
 
 		virtual void update(float dt) override

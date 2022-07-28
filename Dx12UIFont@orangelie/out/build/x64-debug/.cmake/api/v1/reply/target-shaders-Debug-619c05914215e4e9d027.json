@@ -1,0 +1,35 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target"
+		],
+		"files" : 
+		[
+			"Dx12UIFont@orangelie/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 4,
+				"parent" : 0
+			}
+		]
+	},
+	"id" : "shaders::@43de356b483bb7251719",
+	"name" : "shaders",
+	"paths" : 
+	{
+		"build" : "Dx12UIFont@orangelie",
+		"source" : "Dx12UIFont@orangelie"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

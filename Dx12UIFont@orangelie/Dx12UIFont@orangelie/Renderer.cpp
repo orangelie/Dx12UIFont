@@ -67,6 +67,11 @@ namespace orangelie
 		case WM_MENUCHAR:
 			return MAKELRESULT(0, MNC_CLOSE);
 
+		case WM_KEYDOWN:
+			if ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0)
+				PostQuitMessage(0);
+			return 0;
+
 		case WM_ENTERSIZEMOVE:
 			mGameTimer.Stop();
 			mIsResizing = true;
