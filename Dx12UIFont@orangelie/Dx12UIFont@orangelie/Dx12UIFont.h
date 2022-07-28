@@ -7,7 +7,7 @@ namespace orangelie
 	class Dx12UIFont : public Renderer
 	{
 	private:
-		std::unordered_map<std::string, std::unique_ptr<Texture>> mTextures;
+		std::unordered_map<std::string, std::unique_ptr<Shader::Texture>> mTextures;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
 		std::unordered_map<std::string, D3D12_INPUT_ELEMENT_DESC> mInputLayouts;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap = nullptr;
@@ -15,7 +15,7 @@ namespace orangelie
 
 		void BuildTexture()
 		{
-			auto tempTexture = std::make_unique<Texture>();
+			auto tempTexture = std::make_unique<Shader::Texture>();
 			tempTexture->name = "text";
 			tempTexture->fileName = L"Text.png";
 

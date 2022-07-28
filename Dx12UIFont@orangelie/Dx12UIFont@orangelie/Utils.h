@@ -26,6 +26,10 @@
 #include <d3dx12.h>
 #include <dxgi1_4.h>
 #include <DDSTextureLoader.h>
+#include <DirectXCollision.h>
+#include <DirectXColors.h>
+#include <DirectXPackedVector.h>
+#include <DirectXMath.h>
 
 #define CLASSIFICATION_H(n) n(); \
 n(const n&) = delete; \
@@ -46,15 +50,6 @@ n::~n() {}
 	} \
 }
 
-struct Texture
-{
-    std::string name;
-    std::wstring fileName;
-
-    Microsoft::WRL::ComPtr<ID3D12Resource> ResourceGpuHeap;
-    Microsoft::WRL::ComPtr<ID3D12Resource> UploadGpuHeap;
-};
-
 template <class _Tp>
 _Tp& unmove(_Tp&& __value)
 {
@@ -62,6 +57,25 @@ _Tp& unmove(_Tp&& __value)
 }
 
 const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+
+namespace Shader
+{
+    struct Texture
+    {
+        std::string name;
+        std::wstring fileName;
+
+        Microsoft::WRL::ComPtr<ID3D12Resource> ResourceGpuHeap;
+        Microsoft::WRL::ComPtr<ID3D12Resource> UploadGpuHeap;
+    };
+
+    struct Material
+    {
+        DirectX::XMFLOAT4 R0;
+        DirectX::XMFLOAT3 DiffuseAlbedo;
+        float Roughness;
+    };
+}
 
 namespace Utils
 {
