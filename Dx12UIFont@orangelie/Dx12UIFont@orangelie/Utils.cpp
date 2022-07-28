@@ -65,6 +65,18 @@ const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers()
 
 namespace Utils
 {
+    DirectX::XMFLOAT4X4 MatrixIdentity()
+    {
+        static DirectX::XMFLOAT4X4 identity = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+
+        return identity;
+    }
+
     Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultResource(
         ID3D12Device* device,
         ID3D12GraphicsCommandList* cmdList,

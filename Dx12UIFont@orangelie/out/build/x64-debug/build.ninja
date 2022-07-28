@@ -136,6 +136,14 @@ build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\GeometryGenerator.cpp.obj
   TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
   TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
 
+build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\FrameResource.cpp.obj: CXX_COMPILER__ZekrosEngine_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\FrameResource.cpp || cmake_object_order_depends_target_ZekrosEngine
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\ZekrosEngine -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\ZekrosEngine.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target ZekrosEngine
@@ -144,7 +152,7 @@ build Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\GeometryGenerator.cpp.obj
 #############################################
 # Link the executable Dx12UIFont@orangelie\ZekrosEngine.exe
 
-build Dx12UIFont@orangelie\ZekrosEngine.exe: CXX_EXECUTABLE_LINKER__ZekrosEngine_Debug Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Utils.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\GameTimer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\GeometryGenerator.cpp.obj || Dx12UIFont@orangelie\shaders
+build Dx12UIFont@orangelie\ZekrosEngine.exe: CXX_EXECUTABLE_LINKER__ZekrosEngine_Debug Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Utils.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\GameTimer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\GeometryGenerator.cpp.obj Dx12UIFont@orangelie\CMakeFiles\ZekrosEngine.dir\FrameResource.cpp.obj || Dx12UIFont@orangelie\shaders
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

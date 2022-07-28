@@ -1,17 +1,10 @@
 # ninja log v5
-0	30	0	Dx12UIFont@orangelie/CMakeFiles/shaders.util	82991138b7f8e431
-31	857	6806989312416482	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Dependencies/DDSTextureLoader.cpp.obj	18836f6ef29c5716
-34	1265	6806989316491860	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Utils.cpp.obj	572ca48b716f8d0
-47	1266	6806989316491860	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/GameTimer.cpp.obj	4e491e977a4d3a17
-44	1284	6806989316685195	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Renderer.cpp.obj	f6840216ee3c9093
-0	30	0	Dx12UIFont@orangelie/CMakeFiles/shaders.util	82991138b7f8e431
-30	1139	6806989460574796	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/main.cpp.obj	b1abd273048a5535
-1	32	0	Dx12UIFont@orangelie/CMakeFiles/shaders.util	82991138b7f8e431
-32	1126	6806991587543746	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/GeometryGenerator.cpp.obj	5e7a656eab91763c
-1126	1433	6806991589949234	Dx12UIFont@orangelie/ZekrosEngine.exe	86083de5f57ec300
-0	28	0	Dx12UIFont@orangelie/CMakeFiles/shaders.util	82991138b7f8e431
-28	1028	6806992853245479	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/GeometryGenerator.cpp.obj	5e7a656eab91763c
-1028	1242	6806992854484342	Dx12UIFont@orangelie/ZekrosEngine.exe	86083de5f57ec300
-1	30	0	Dx12UIFont@orangelie/CMakeFiles/shaders.util	82991138b7f8e431
-31	1210	6806993488241419	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/GeometryGenerator.cpp.obj	5e7a656eab91763c
-1210	1434	6806993489548436	Dx12UIFont@orangelie/ZekrosEngine.exe	86083de5f57ec300
+1	52	0	Dx12UIFont@orangelie/CMakeFiles/shaders.util	82991138b7f8e431
+59	1809	6807170414978477	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Dependencies/DDSTextureLoader.cpp.obj	18836f6ef29c5716
+73	2262	6807170419489628	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/GameTimer.cpp.obj	4e491e977a4d3a17
+67	2378	6807170420642103	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Utils.cpp.obj	572ca48b716f8d0
+88	2392	6807170420742243	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/Renderer.cpp.obj	f6840216ee3c9093
+95	2409	6807170420989802	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/FrameResource.cpp.obj	f8d45f3de2cc7dd
+80	2427	6807170421145711	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/GeometryGenerator.cpp.obj	5e7a656eab91763c
+53	2681	6807170423690182	Dx12UIFont@orangelie/CMakeFiles/ZekrosEngine.dir/main.cpp.obj	b1abd273048a5535
+2681	3237	6807170428175669	Dx12UIFont@orangelie/ZekrosEngine.exe	2ef1f56d52e4faec

@@ -2,6 +2,7 @@
 
 #include "Utils.h"
 #include "GameTimer.h"
+#include "GeometryGenerator.h"
 
 
 namespace orangelie

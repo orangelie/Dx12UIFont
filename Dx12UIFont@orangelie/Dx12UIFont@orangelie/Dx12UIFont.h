@@ -10,6 +10,8 @@ namespace orangelie
 		std::unordered_map<std::string, std::unique_ptr<Shader::Texture>> mTextures;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
 		std::unordered_map<std::string, D3D12_INPUT_ELEMENT_DESC> mInputLayouts;
+		std::unordered_map<std::string, std::unique_ptr<Shader::MeshGeometry>> mDrawArgs;
+		std::vector<std::unique_ptr<Shader::RenderItem>> mAllRenderItems;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignatrue = nullptr;
 
@@ -107,7 +109,61 @@ namespace orangelie
 
 		void BuildQuadMesh()
 		{
+			GeometryGenerator geoGen;
+			GeometryGenerator::MeshData quad = geoGen.CreateQuad(100.0f, 100.0f, 50.0f, 50.0f, 1.0f);
 
+			std::vector<Shader::Vertex> vertices(quad.Vertices.size());
+			for (size_t i = 0; i < vertices.size(); ++i)
+			{
+				vertices[i].Position = quad.Vertices[i].Position;
+				vertices[i].Normal = quad.Vertices[i].Normal;
+				vertices[i].Tangent = quad.Vertices[i].Tangent;
+				vertices[i].TexCoord = quad.Vertices[i].TexCoord;
+			}
+
+			std::vector<std::uint32_t> indices = quad.Indices;
+
+			UINT vertexBufferSize = sizeof(Shader::Vertex) * (UINT)vertices.size();
+			UINT indexBufferSize = sizeof(std::uint32_t) * (UINT)indices.size();
+
+			auto meshGeometry = std::make_unique<Shader::MeshGeometry>();
+			meshGeometry->name = "shape";
+
+			HR(D3DCreateBlob(vertexBufferSize, meshGeometry->VertexCpu.GetAddressOf()));
+			HR(D3DCreateBlob(indexBufferSize, meshGeometry->IndexCpu.GetAddressOf()));
+			meshGeometry->VertexGpu = Utils::CreateDefaultResource(mDevice.Get(), mGraphicsCommandList.Get(),
+				vertices.data(), vertexBufferSize, meshGeometry->VertexGpuUploader);
+			meshGeometry->IndexGpu = Utils::CreateDefaultResource(mDevice.Get(), mGraphicsCommandList.Get(),
+				indices.data(), indexBufferSize, meshGeometry->IndexGpuUploader);
+
+			meshGeometry->VertexBufferByteSize = vertexBufferSize;
+			meshGeometry->VertexByteStride = sizeof(Shader::Vertex);
+
+			meshGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
+			meshGeometry->IndexBufferByteSize = indexBufferSize;
+
+			Shader::SubmeshGeometry subMeshGeo = {};
+			subMeshGeo.IndexCount = (UINT)indices.size();
+			subMeshGeo.BaseVertexLocation = 0;
+			subMeshGeo.StartIndexLocation = 0;
+
+			meshGeometry->DrawArgs["quad"] = subMeshGeo;
+
+			mDrawArgs[meshGeometry->name] = std::move(meshGeometry);
+		}
+
+		void BuildRenderItems()
+		{
+			auto quadRitem = std::make_unique<Shader::RenderItem>();
+			quadRitem->World = Utils::MatrixIdentity();
+			quadRitem->TexTransform = Utils::MatrixIdentity();
+			quadRitem->meshGeo = mDrawArgs["shape"].get();
+			quadRitem->IndexCount = quadRitem->meshGeo->DrawArgs["quad"].IndexCount;
+			quadRitem->BaseVertexLocation = quadRitem->meshGeo->DrawArgs["quad"].BaseVertexLocation;
+			quadRitem->StartIndexLocation = quadRitem->meshGeo->DrawArgs["quad"].StartIndexLocation;
+			quadRitem->PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+			mAllRenderItems.push_back(std::move(quadRitem));
 		}
 
 	protected:
@@ -120,6 +176,7 @@ namespace orangelie
 			BuildDescriptor();
 			BuildShadersAndInputLayout();
 			BuildQuadMesh();
+			BuildRenderItems();
 
 			HR(mGraphicsCommandList->Close());
 			ID3D12CommandList* cmdLists[] = { mGraphicsCommandList.Get() };
@@ -137,6 +194,11 @@ namespace orangelie
 		{
 			HR(mCommandAllocator->Reset());
 			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
+
+			mGraphicsCommandList->SetGraphicsRootSignature(mRootSignatrue.Get());
+
+			ID3D12DescriptorHeap* descriptorHeaps[] = { mSrvHeap.Get() };
+			mGraphicsCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 			mGraphicsCommandList->ResourceBarrier(1,
 				&unmove(CD3DX12_RESOURCE_BARRIER::Transition(mBackBuffer[mCurrBackBufferIndex].Get(),

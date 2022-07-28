@@ -28,8 +28,9 @@ set(UTILITIES "Utils.cpp" "Utils.h")
 set(DXGI_RENDERER "Renderer.cpp" "Renderer.h")
 set(GAMETIMER "GameTimer.h" "GameTimer.cpp")
 set(GEOMETRYGENN "GeometryGenerator.h" "GeometryGenerator.cpp")
+set(FRAMERESOURCE "FrameResource.h" "FrameResource.cpp")
 
-add_executable (ZekrosEngine "main.cpp" "Dx12UIFont.h" ${DEPENDENCIES} ${UTILITIES} ${DXGI_RENDERER} ${GAMETIMER} ${GEOMETRYGENN})
+add_executable (ZekrosEngine "main.cpp" "Dx12UIFont.h" "UploadBuffer.h" ${DEPENDENCIES} ${UTILITIES} ${DXGI_RENDERER} ${GAMETIMER} ${GEOMETRYGENN} ${FRAMERESOURCE})
 
 include_directories(ZekrosEngine "./Dependencies")
 add_dependencies(ZekrosEngine shaders)

@@ -14,6 +14,8 @@ namespace orangelie
 
 		struct Vertex
 		{
+			Vertex() {}
+
 			Vertex(
 				DirectX::XMFLOAT3 Position,
 				DirectX::XMFLOAT3 Normal,
@@ -48,18 +50,18 @@ namespace orangelie
 		{
 			std::vector<u16> Indices16() const
 			{
-				std::vector<u16> indices16(Indieces.size());
+				std::vector<u16> indices16(Indices.size());
 
-				for (size_t i = 0; i < Indieces.size(); ++i)
+				for (size_t i = 0; i < Indices.size(); ++i)
 				{
-					indices16[i] = static_cast<u16>(Indieces[i]);
+					indices16[i] = static_cast<u16>(Indices[i]);
 				}
 
 				return indices16;
 			}
 
 			std::vector<Vertex> Vertices;
-			std::vector<u32> Indieces;
+			std::vector<u32> Indices;
 		};
 
 		MeshData CreateQuad(float x, float y, float width, float height, float depth);
