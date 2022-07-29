@@ -7,13 +7,19 @@ namespace orangelie
 	class Dx12UIFont : public Renderer
 	{
 	private:
+		std::vector<std::unique_ptr<FrameResource>> mFrameResources;
+		FrameResource* mCurrFrameResource = nullptr;
+		UINT mCurrFrameResourceIndex = 0;
+
 		std::unordered_map<std::string, std::unique_ptr<Shader::Texture>> mTextures;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
 		std::unordered_map<std::string, D3D12_INPUT_ELEMENT_DESC> mInputLayouts;
 		std::unordered_map<std::string, std::unique_ptr<Shader::MeshGeometry>> mDrawArgs;
 		std::vector<std::unique_ptr<Shader::RenderItem>> mAllRenderItems;
+		std::vector<Shader::RenderItem*> mRenderLayer[(size_t)Shader::RenderLayer::Count];
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvHeap = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignatrue = nullptr;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> mGraphicsPSO;
 
 		void BuildTexture()
 		{
@@ -163,7 +169,43 @@ namespace orangelie
 			quadRitem->StartIndexLocation = quadRitem->meshGeo->DrawArgs["quad"].StartIndexLocation;
 			quadRitem->PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+			mRenderLayer[(size_t)Shader::RenderLayer::Text].push_back(quadRitem.get());
 			mAllRenderItems.push_back(std::move(quadRitem));
+		}
+
+		void BuildFrameResources()
+		{
+			for (int i = 0; i < Shader::gNumFrameResources; ++i)
+			{
+				mFrameResources.push_back(std::make_unique<FrameResource>(mDevice.Get(), 1, (UINT)mAllRenderItems.size(), 1));
+			}
+		}
+
+		void BuildPSO()
+		{
+			D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPSODescriptor = {};
+			graphicsPSODescriptor.NodeMask = 0;
+			graphicsPSODescriptor.InputLayout = { &mInputLayouts["layout1"], 1 };
+			graphicsPSODescriptor.pRootSignature = mRootSignatrue.Get();
+			graphicsPSODescriptor.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+			graphicsPSODescriptor.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+			graphicsPSODescriptor.DSVFormat = gDepthStencilFormat;
+			graphicsPSODescriptor.NumRenderTargets = 1;
+			graphicsPSODescriptor.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+			graphicsPSODescriptor.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+			graphicsPSODescriptor.RTVFormats[0] = gBackBufferFormat;
+			graphicsPSODescriptor.SampleMask = UINT_MAX;
+			graphicsPSODescriptor.SampleDesc = { 1, 0 };
+			graphicsPSODescriptor.VS = {
+				mShaders["vs"]->GetBufferPointer(),
+				mShaders["vs"]->GetBufferSize()
+			};
+			graphicsPSODescriptor.PS = {
+				mShaders["ps"]->GetBufferPointer(),
+				mShaders["ps"]->GetBufferSize()
+			};
+
+			HR(mDevice->CreateGraphicsPipelineState(&graphicsPSODescriptor, IID_PPV_ARGS(mGraphicsPSO["opaque"].GetAddressOf())));
 		}
 
 	protected:
@@ -177,6 +219,8 @@ namespace orangelie
 			BuildShadersAndInputLayout();
 			BuildQuadMesh();
 			BuildRenderItems();
+			BuildFrameResources();
+			BuildPSO();
 
 			HR(mGraphicsCommandList->Close());
 			ID3D12CommandList* cmdLists[] = { mGraphicsCommandList.Get() };
@@ -187,6 +231,17 @@ namespace orangelie
 
 		virtual void update(float dt) override
 		{
+			mCurrFrameResourceIndex = (mCurrFrameResourceIndex + 1) % Shader::gNumFrameResources;
+			mCurrFrameResource = mFrameResources[mCurrFrameResourceIndex].get();
+
+			if (mFence->GetCompletedValue() < mCurrFrameResource->mFenceCount && mCurrFrameResource->mFenceCount != 0)
+			{
+				HANDLE hEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+				mFence->SetEventOnCompletion(mCurrFrameResource->mFenceCount, hEvent);
+				WaitForSingleObject(hEvent, 0xffffffff);
+				CloseHandle(hEvent);
+			}
+
 
 		}
 
@@ -227,6 +282,9 @@ namespace orangelie
 			mCurrBackBufferIndex = (mCurrBackBufferIndex + 1) % gBackBufferCount;
 
 			FlushCommandList();
+
+			mCurrFrameResource->mFenceCount = ++mCurrFenceCount;
+			mCommandQueue->Signal(mFence.Get(), mCurrFenceCount);
 		}
 	};
 }

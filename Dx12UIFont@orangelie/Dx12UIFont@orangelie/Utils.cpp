@@ -77,6 +77,11 @@ namespace Utils
         return identity;
     }
 
+    UINT ConstantBufferSize(UINT size)
+    {
+        return (size + 255) & ~255;
+    }
+
     Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultResource(
         ID3D12Device* device,
         ID3D12GraphicsCommandList* cmdList,

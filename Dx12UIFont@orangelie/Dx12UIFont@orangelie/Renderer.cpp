@@ -60,6 +60,11 @@ namespace orangelie
 				{
 
 				}
+				else
+				{
+					if(mDevice != nullptr)
+						OnResize(mClientWidth, mClientHeight);
+				}
 			}
 
 			return 0;
@@ -68,7 +73,7 @@ namespace orangelie
 			return MAKELRESULT(0, MNC_CLOSE);
 
 		case WM_KEYDOWN:
-			if ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0)
+			if (wParam == VK_ESCAPE)
 				PostQuitMessage(0);
 			return 0;
 

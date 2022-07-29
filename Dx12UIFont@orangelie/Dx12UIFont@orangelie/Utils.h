@@ -63,6 +63,8 @@ namespace Utils
 {
     DirectX::XMFLOAT4X4 MatrixIdentity();
 
+    UINT ConstantBufferSize(UINT size);
+
     Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultResource(
         ID3D12Device* device,
         ID3D12GraphicsCommandList* cmdList,
@@ -100,8 +102,18 @@ namespace WICConverter
 
 namespace Shader
 {
-    static const UINT gNumFrameResources = 3;
+    static const int gNumFrameResources = 3;
 
+
+    struct Light
+    {
+        DirectX::XMFLOAT3 Strength;
+        float FallofStart;
+        DirectX::XMFLOAT3 Direction;
+        float FallofEnd;
+        DirectX::XMFLOAT3 Position;
+        float SpotPower;
+    };
 
     struct SubmeshGeometry
     {
@@ -145,6 +157,12 @@ namespace Shader
 
             return indexBufferView;
         }
+    };
+
+    enum class RenderLayer : int
+    {
+        Text,
+        Count
     };
 
     struct RenderItem

@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include "GameTimer.h"
 #include "GeometryGenerator.h"
+#include "FrameResource.h"
 
 
 namespace orangelie
@@ -35,7 +36,6 @@ namespace orangelie
 
 		
 		Microsoft::WRL::ComPtr<IDXGIFactory4> mFactory4 = nullptr;
-		Microsoft::WRL::ComPtr<ID3D12Fence> mFence = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvDescriptorHeap = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvDescriptorHeap = nullptr;
 
@@ -56,6 +56,7 @@ namespace orangelie
 
 		Microsoft::WRL::ComPtr<ID3D12Device> mDevice = nullptr;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Fence> mFence = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mGraphicsCommandList = nullptr;
