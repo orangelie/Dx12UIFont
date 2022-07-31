@@ -17,9 +17,7 @@ namespace orangelie
 		DirectX::XMFLOAT4X4 TexTransform = Utils::MatrixIdentity();
 
 		UINT MatIndex;
-		UINT pad1;
-		UINT pad2;
-		UINT pad3;
+		DirectX::XMFLOAT3 cbPerPadding1;
 	};
 
 	struct PassConstants

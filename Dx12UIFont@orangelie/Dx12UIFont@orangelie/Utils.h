@@ -173,6 +173,7 @@ namespace Shader
         DirectX::XMFLOAT4X4 TexTransform = Utils::MatrixIdentity();
 
         UINT NumframeDirty = gNumFrameResources;
+        UINT ObjIndex;
 
         MeshGeometry* meshGeo = nullptr;
 
@@ -187,8 +188,8 @@ namespace Shader
     {
         DirectX::XMFLOAT3 Position;
         DirectX::XMFLOAT3 Normal;
-        DirectX::XMFLOAT3 Tangent;
         DirectX::XMFLOAT2 TexCoord;
+        DirectX::XMFLOAT3 Tangent;
     };
 
     struct Texture

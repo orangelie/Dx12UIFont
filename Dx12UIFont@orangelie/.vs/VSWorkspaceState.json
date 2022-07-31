@@ -1,8 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Dx12UIFont@orangelie"
+    "\\Dx12UIFont@orangelie",
+    "\\Dx12UIFont@orangelie\\Shaders"
   ],
-  "SelectedNode": "\\Dx12UIFont@orangelie\\FrameResource.cpp",
   "PreviewInSolutionExplorer": false
 }

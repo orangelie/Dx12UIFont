@@ -13,7 +13,7 @@ namespace orangelie
 
 		std::unordered_map<std::string, std::unique_ptr<Shader::Texture>> mTextures;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
-		std::unordered_map<std::string, D3D12_INPUT_ELEMENT_DESC> mInputLayouts;
+		std::unordered_map<std::string, std::vector<D3D12_INPUT_ELEMENT_DESC>> mInputLayouts;
 		std::unordered_map<std::string, std::unique_ptr<Shader::MeshGeometry>> mDrawArgs;
 		std::vector<std::unique_ptr<Shader::RenderItem>> mAllRenderItems;
 		std::vector<Shader::RenderItem*> mRenderLayer[(size_t)Shader::RenderLayer::Count];
@@ -49,13 +49,16 @@ namespace orangelie
 			CD3DX12_DESCRIPTOR_RANGE srvRange;
 			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0);
 
-			CD3DX12_ROOT_PARAMETER rootParameter;
-			rootParameter.InitAsDescriptorTable(1, &srvRange, D3D12_SHADER_VISIBILITY_PIXEL);
+			constexpr const size_t parameterSize = 3;
+			CD3DX12_ROOT_PARAMETER rootParameter[parameterSize];
+			rootParameter[0].InitAsConstantBufferView(0);												// Object
+			rootParameter[1].InitAsConstantBufferView(1);												// Pass
+			rootParameter[2].InitAsDescriptorTable(1, &srvRange, D3D12_SHADER_VISIBILITY_PIXEL);		// Textures
 
 			auto staticSamplers = GetStaticSamplers();
 
 			CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDescriptor = {};
-			rootSignatureDescriptor.Init(1, &rootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+			rootSignatureDescriptor.Init(parameterSize, rootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 			Microsoft::WRL::ComPtr<ID3DBlob> ppBlob, ppErrorMsg;
@@ -109,7 +112,10 @@ namespace orangelie
 			mShaders["ps"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "PS", "ps_5_1");
 
 			mInputLayouts["layout1"] = {
-				"POSITION", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+				{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 			};
 		}
 
@@ -161,6 +167,7 @@ namespace orangelie
 		void BuildRenderItems()
 		{
 			auto quadRitem = std::make_unique<Shader::RenderItem>();
+			quadRitem->ObjIndex = 0;
 			quadRitem->World = Utils::MatrixIdentity();
 			quadRitem->TexTransform = Utils::MatrixIdentity();
 			quadRitem->meshGeo = mDrawArgs["shape"].get();
@@ -185,7 +192,7 @@ namespace orangelie
 		{
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPSODescriptor = {};
 			graphicsPSODescriptor.NodeMask = 0;
-			graphicsPSODescriptor.InputLayout = { &mInputLayouts["layout1"], 1 };
+			graphicsPSODescriptor.InputLayout = { mInputLayouts["layout1"].data(), (UINT)mInputLayouts["layout1"].size() };
 			graphicsPSODescriptor.pRootSignature = mRootSignatrue.Get();
 			graphicsPSODescriptor.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 			graphicsPSODescriptor.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -206,6 +213,28 @@ namespace orangelie
 			};
 
 			HR(mDevice->CreateGraphicsPipelineState(&graphicsPSODescriptor, IID_PPV_ARGS(mGraphicsPSO["opaque"].GetAddressOf())));
+		}
+
+		void UpdateObjectCB()
+		{
+			for (auto& e : mAllRenderItems)
+			{
+				ObjectConstants objConstants = {};
+				DirectX::XMStoreFloat4x4(&objConstants.World, DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&e->World)));
+				DirectX::XMStoreFloat4x4(&objConstants.TexTransform, DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&e->TexTransform)));
+
+				mCurrFrameResource->mObjCB->CopyData(e->ObjIndex, objConstants);
+			}
+		}
+
+		void UpdatePassCB()
+		{
+			// 이 메소드 매꾸고, Draw부분에 DrawRitem이랑 constantbufferview채우기
+
+			PassConstants passConstants = {};
+			//passConstants.View = 
+
+			mCurrFrameResource->mPassCB->CopyData(0, passConstants);
 		}
 
 	protected:
@@ -242,13 +271,14 @@ namespace orangelie
 				CloseHandle(hEvent);
 			}
 
-
+			UpdateObjectCB();
+			UpdatePassCB();
 		}
 
 		virtual void draw(float dt) override
 		{
 			HR(mCommandAllocator->Reset());
-			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
+			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), mGraphicsPSO["opaque"].Get()));
 
 			mGraphicsCommandList->SetGraphicsRootSignature(mRootSignatrue.Get());
 
