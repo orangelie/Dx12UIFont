@@ -80,10 +80,10 @@ VertexOut VS(VertexIn vin)
 	vout.PosNDC = mul(posW, gViewProj);
 
 	// Normal
-	vout.NormalW = mul(float4(vin.NormalL, 1.0f), gWorld).xyz;
+	vout.NormalW = mul(vin.NormalL, (float3x3)gWorld);
 
 	// Tangent
-	vout.TangentW = mul(float4(vin.TangentL, 1.0f), gWorld).xyz;
+	vout.TangentW = mul(vin.TangentL, (float3x3)gWorld);
 
 	// TexCoord
 	vout.TexCoord = mul(float4(vin.TexCoord, 0.0f, 1.0f), gTexTransform).xy;
@@ -93,5 +93,5 @@ VertexOut VS(VertexIn vin)
 
 float4 PS(VertexOut vin) : SV_TARGET
 {
-	return gTextures[0].Sample(gSamLinearWrap, vin.TexCoord);
+	return gTextures[0].Sample(gSamAnisotropicWrap, vin.TexCoord);
 }

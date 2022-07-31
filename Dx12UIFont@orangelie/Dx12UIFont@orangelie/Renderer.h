@@ -4,6 +4,7 @@
 #include "GameTimer.h"
 #include "GeometryGenerator.h"
 #include "FrameResource.h"
+#include "Camera.h"
 
 
 namespace orangelie
@@ -22,16 +23,13 @@ namespace orangelie
 	private:
 		void BuildWindows(HINSTANCE hInstance, UINT screenWidth, UINT screenHeight);
 		void BuildDxgiAndD3D12(UINT screenWidth, UINT screenHeight);
-		void OnResize(UINT screenWidth, UINT screenHeight);
 
 	private:
-		GameTimer mGameTimer;
-
 		LPCWSTR mWndClassName = L"orangelieApp";
 
 		HWND mHwnd;
 		HINSTANCE mModuleHandle;
-		UINT mFullscreenWidth, mFullscreenHeight, mClientWidth, mClientHeight;
+		UINT mFullscreenWidth, mFullscreenHeight;
 		bool mIsResizing = false, mIsMinimized = false, mIsMaximized = false, mIsEnginePaused = false;
 
 		
@@ -40,11 +38,14 @@ namespace orangelie
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvDescriptorHeap = nullptr;
 
 	protected:
+		GameTimer mGameTimer;
+
 		const static UINT gBackBufferCount = 2;
 		const static DXGI_FORMAT gBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 		const static DXGI_FORMAT gDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		UINT64 mCurrFenceCount = 0;
 		UINT mRtvSize, mDsvSize, mCbvSrvUavSize;
+		UINT mClientWidth, mClientHeight;
 
 		void FlushCommandList();
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle();
@@ -53,6 +54,7 @@ namespace orangelie
 		virtual void init() = 0;
 		virtual void update(float dt) = 0;
 		virtual void draw(float dt) = 0;
+		virtual void OnResize(UINT screenWidth, UINT screenHeight);
 
 		Microsoft::WRL::ComPtr<ID3D12Device> mDevice = nullptr;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain = nullptr;

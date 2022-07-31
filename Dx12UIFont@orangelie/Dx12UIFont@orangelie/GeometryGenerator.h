@@ -64,6 +64,9 @@ namespace orangelie
 			std::vector<u32> Indices;
 		};
 
+		MeshData CreateBox(float width, float height, float depth, u32 numSubdivisions);
+		void Subdivide(MeshData& meshData);
+		Vertex MidPoint(const Vertex& v0, const Vertex& v1);
 		MeshData CreateQuad(float x, float y, float width, float height, float depth);
 
 	private:

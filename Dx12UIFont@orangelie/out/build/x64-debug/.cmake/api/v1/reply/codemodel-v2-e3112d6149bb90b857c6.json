@@ -1,0 +1,94 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "Dx12UIFont@orangelie",
+					"jsonFile" : "directory-Dx12UIFont@orangelie-Debug-a4e05a446453188aea03.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Dx12UIFont@orangelie",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "Dx12UIFont@orangelie",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "SimpleCube::@43de356b483bb7251719",
+					"jsonFile" : "target-SimpleCube-Debug-7680a9975d0098e5d662.json",
+					"name" : "SimpleCube",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "TextFont::@43de356b483bb7251719",
+					"jsonFile" : "target-TextFont-Debug-98853f5e2948061e49e9.json",
+					"name" : "TextFont",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "shaders::@43de356b483bb7251719",
+					"jsonFile" : "target-shaders-Debug-619c05914215e4e9d027.json",
+					"name" : "shaders",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug",
+		"source" : "C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

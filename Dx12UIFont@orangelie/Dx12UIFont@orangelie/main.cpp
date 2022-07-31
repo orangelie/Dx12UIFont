@@ -1,4 +1,10 @@
-﻿#include "Dx12UIFont.h"
+﻿#if defined(TEXTFONT)
+#include "Test/Dx12UIFont.h"
+#endif
+
+#if defined(SIMPLECUBE)
+#include "Test/SimpleCube.h"
+#endif
 
 int __stdcall WinMain(
 	_In_ HINSTANCE hInstance,
@@ -14,11 +20,10 @@ int __stdcall WinMain(
 
 	try
 	{
-		std::unique_ptr<orangelie::Renderer> appRenderer(new orangelie::Dx12UIFont);
+		std::unique_ptr<orangelie::Renderer> appRenderer(new ZEKROS_ENGINE);
 
 		appRenderer->Initialize(hInstance, 1080, 860);
 		appRenderer->Render();
-
 	}
 	catch (const std::exception& e)
 	{

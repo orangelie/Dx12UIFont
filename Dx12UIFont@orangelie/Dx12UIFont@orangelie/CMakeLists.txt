@@ -29,20 +29,26 @@ set(DXGI_RENDERER "Renderer.cpp" "Renderer.h")
 set(GAMETIMER "GameTimer.h" "GameTimer.cpp")
 set(GEOMETRYGENN "GeometryGenerator.h" "GeometryGenerator.cpp")
 set(FRAMERESOURCE "FrameResource.h" "FrameResource.cpp")
+set(CAMERA "Camera.h" "Camera.cpp")
 
-add_executable (ZekrosEngine "main.cpp" "Dx12UIFont.h" "UploadBuffer.h" ${DEPENDENCIES} ${UTILITIES} ${DXGI_RENDERER} ${GAMETIMER} ${GEOMETRYGENN} ${FRAMERESOURCE})
+add_executable (SimpleCube "main.cpp" "Test/SimpleCube.h" "UploadBuffer.h" ${DEPENDENCIES} ${UTILITIES} ${DXGI_RENDERER} ${GAMETIMER} ${GEOMETRYGENN} ${FRAMERESOURCE} ${CAMERA})
+include_directories(SimpleCube "./Dependencies")
+add_dependencies(SimpleCube shaders)
+target_compile_definitions(SimpleCube PRIVATE SIMPLECUBE)
 
-include_directories(ZekrosEngine "./Dependencies")
-add_dependencies(ZekrosEngine shaders)
+add_executable (TextFont "main.cpp" "Test/Dx12UIFont.h" "UploadBuffer.h" ${DEPENDENCIES} ${UTILITIES} ${DXGI_RENDERER} ${GAMETIMER} ${GEOMETRYGENN} ${FRAMERESOURCE} ${CAMERA})
+include_directories(TextFont "./Dependencies")
+add_dependencies(TextFont shaders)
+target_compile_definitions(TextFont PRIVATE TEXTFONT)
 
 
 
-add_custom_command(TARGET ZekrosEngine POST_BUILD
+add_custom_command(TARGET SimpleCube POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${CMAKE_SOURCE_DIR}/Dx12UIFont@orangelie/Shaders
       ${CMAKE_BINARY_DIR}/Dx12UIFont@orangelie)
 
-add_custom_command(TARGET ZekrosEngine POST_BUILD
+add_custom_command(TARGET SimpleCube POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${CMAKE_SOURCE_DIR}/Dx12UIFont@orangelie/Textures
       ${CMAKE_BINARY_DIR}/Dx12UIFont@orangelie)

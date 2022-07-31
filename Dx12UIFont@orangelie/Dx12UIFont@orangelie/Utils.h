@@ -161,7 +161,7 @@ namespace Shader
 
     enum class RenderLayer : int
     {
-        Text,
+        Text = 0,
         Count
     };
 

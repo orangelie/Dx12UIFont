@@ -64,9 +64,9 @@ namespace orangelie
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mCommandAllocator = nullptr;
 		UINT64 mFenceCount = 0;
 
-		std::unique_ptr<UploadBuffer<ObjectConstants>> mObjCB;
-		std::unique_ptr<UploadBuffer<PassConstants>> mPassCB;
-		std::unique_ptr<UploadBuffer<MaterialConstants>> mMatVB;
+		std::unique_ptr<UploadBuffer<ObjectConstants>> mObjCB = nullptr;
+		std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
+		std::unique_ptr<UploadBuffer<MaterialConstants>> mMatVB = nullptr;
 
 	};
 }
