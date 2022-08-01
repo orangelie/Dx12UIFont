@@ -27,6 +27,8 @@ namespace orangelie
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignatrue = nullptr;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>> mGraphicsPSO;
 
+		INT mLastMousePosX, mLastMousePosY;
+
 		void BuildTexture()
 		{
 			auto tempTexture = std::make_unique<Shader::Texture>();
@@ -333,9 +335,27 @@ namespace orangelie
 			}
 		}
 
+		void UpdateInput(float dt)
+		{
+			const float speed = 15.0f;
+
+			if ((GetAsyncKeyState('W') & 0x8000) != 0)
+				mCamera.Walk(speed * dt);
+			if ((GetAsyncKeyState('S') & 0x8000) != 0)
+				mCamera.Walk(-speed * dt);
+			if ((GetAsyncKeyState('D') & 0x8000) != 0)
+				mCamera.Strafe(speed * dt);
+			if ((GetAsyncKeyState('A') & 0x8000) != 0)
+				mCamera.Strafe(-speed * dt);
+
+			mCamera.UpdateViewMatrix();
+		}
+
 	protected:
 		virtual void init() override
 		{
+			mCamera.SetPosition(0.0f, 0.0f, 0.0f);
+
 			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
 			BuildTexture();
@@ -357,6 +377,8 @@ namespace orangelie
 
 		virtual void update(float dt) override
 		{
+			UpdateInput(dt);
+
 			mCurrFrameResourceIndex = (mCurrFrameResourceIndex + 1) % Shader::gNumFrameResources;
 			mCurrFrameResource = mFrameResources[mCurrFrameResourceIndex].get();
 
@@ -423,11 +445,35 @@ namespace orangelie
 		{
 			Renderer::OnResize(screenWidth, screenHeight);
 
-			mCamera.SetInstancedLookat(
-				DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-				DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
-				DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
 			mCamera.SetLens(0.25f * DirectX::XM_PI, (float)mClientWidth / (float)mClientHeight, 1.0f, 1000.0f);
+		}
+
+		virtual void RButtonDown(WPARAM btnState, int x, int y) override
+		{
+			mLastMousePosX = x;
+			mLastMousePosY = y;
+
+			SetCapture(mHwnd);
+		}
+
+		virtual void RButtonUp(WPARAM btnState, int x, int y) override
+		{
+			ReleaseCapture();
+		}
+
+		virtual void MouseMove(WPARAM btnState, int x, int y) override
+		{
+			if ((btnState & MK_LBUTTON) != 0)
+			{
+				float dx = DirectX::XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePosX));
+				float dy = DirectX::XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePosY));
+
+				mCamera.Pitch(dy);
+				mCamera.RotationY(dx);
+			}
+
+			mLastMousePosX = x;
+			mLastMousePosY = y;
 		}
 	};
 }

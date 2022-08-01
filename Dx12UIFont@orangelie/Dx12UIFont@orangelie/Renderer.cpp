@@ -90,6 +90,16 @@ namespace orangelie
 			OnResize(mClientWidth, mClientHeight);
 			return 0;
 
+		case WM_MOUSEMOVE:
+			MouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			return 0;
+		case WM_RBUTTONDOWN:
+			RButtonDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			return 0;
+		case WM_RBUTTONUP:
+			RButtonUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			return 0;
+
 		case WM_DESTROY: case WM_CLOSE:
 			PostQuitMessage(0); return 0;
 		}

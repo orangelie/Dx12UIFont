@@ -27,7 +27,6 @@ namespace orangelie
 	private:
 		LPCWSTR mWndClassName = L"orangelieApp";
 
-		HWND mHwnd;
 		HINSTANCE mModuleHandle;
 		UINT mFullscreenWidth, mFullscreenHeight;
 		bool mIsResizing = false, mIsMinimized = false, mIsMaximized = false, mIsEnginePaused = false;
@@ -46,6 +45,7 @@ namespace orangelie
 		UINT64 mCurrFenceCount = 0;
 		UINT mRtvSize, mDsvSize, mCbvSrvUavSize;
 		UINT mClientWidth, mClientHeight;
+		HWND mHwnd;
 
 		void FlushCommandList();
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle();
@@ -55,6 +55,9 @@ namespace orangelie
 		virtual void update(float dt) = 0;
 		virtual void draw(float dt) = 0;
 		virtual void OnResize(UINT screenWidth, UINT screenHeight);
+		virtual void RButtonDown(WPARAM btnState, int x, int y) = 0;
+		virtual void RButtonUp(WPARAM btnState, int x, int y) = 0;
+		virtual void MouseMove(WPARAM btnState, int x, int y) = 0;
 
 		Microsoft::WRL::ComPtr<ID3D12Device> mDevice = nullptr;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain = nullptr;
