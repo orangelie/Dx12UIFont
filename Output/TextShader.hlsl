@@ -86,15 +86,16 @@ VertexOut VS(VertexIn vin)
 
 float4 PS(VertexOut vin) : SV_TARGET
 {
-	float4 color = gTextures[gMatIndex].Sample(gSamLinearClamp, vin.TexCoord);
+	float4 color = gTextures[gMatIndex].Sample(gSamAnisotropicWrap, vin.TexCoord);
+	float4 wood = gTextures[1].Sample(gSamAnisotropicWrap, vin.TexCoord);
 
 	if (color.r == 0.0f)
 	{
-		color.a = 0.0f;
+		clip(color.a);
 	}
 	else
 	{
-		color.rgb = gColor.rgb;
+		color.rgb = wood.rgb;
 		color.a = 1.0f;
 	}
 

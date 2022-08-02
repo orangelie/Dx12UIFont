@@ -4,19 +4,19 @@ namespace orangelie
 {
 	namespace TextFont
 	{
-        std::vector<FontType> LoadFontData(const char* filename)
+        std::vector<Shader::FontType> LoadFontData(const char* filename)
         {
             std::ifstream fin;
             int i;
             char temp;
 
 
-            std::vector<FontType> font(95);
+            std::vector<Shader::FontType> font(95);
 
             fin.open(filename);
             if (fin.fail())
             {
-                return (std::vector<FontType>)0;
+                return (std::vector<Shader::FontType>)0;
             }
 
             for (i = 0; i < 95; i++)

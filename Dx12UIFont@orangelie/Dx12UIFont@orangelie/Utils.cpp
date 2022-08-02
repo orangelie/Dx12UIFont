@@ -1,68 +1,5 @@
 #include "Utils.h"
 
-const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers()
-{
-    CD3DX12_STATIC_SAMPLER_DESC pointWrap(
-        0,
-        D3D12_FILTER_MIN_MAG_MIP_POINT,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        0.0f,
-        8);
-
-    CD3DX12_STATIC_SAMPLER_DESC pointClamp(
-        1,
-        D3D12_FILTER_MIN_MAG_MIP_POINT,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        0.0f,
-        8);
-
-    CD3DX12_STATIC_SAMPLER_DESC linearWrap(
-        2,
-        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        0.0f,
-        8);
-
-    CD3DX12_STATIC_SAMPLER_DESC linearClamp(
-        3,
-        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        0.0f,
-        8);
-
-    CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
-        4,
-        D3D12_FILTER_ANISOTROPIC,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        0.0f,
-        16);
-
-    CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
-        5,
-        D3D12_FILTER_ANISOTROPIC,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-        0.0f,
-        16);
-
-    return {
-        pointWrap, pointClamp,
-        linearWrap, linearClamp,
-        anisotropicWrap, anisotropicClamp
-    };
-}
-
 namespace Utils
 {
     DirectX::XMFLOAT4X4 MatrixIdentity()
@@ -404,5 +341,109 @@ namespace WICConverter
         free(ImageData);
 
         return 0;
+    }
+}
+
+
+const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers()
+{
+    CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+        0,
+        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC pointClamp(
+        1,
+        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC linearWrap(
+        2,
+        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC linearClamp(
+        3,
+        D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        0.0f,
+        8);
+
+    CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
+        4,
+        D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        0.0f,
+        16);
+
+    CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
+        5,
+        D3D12_FILTER_ANISOTROPIC,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+        0.0f,
+        16);
+
+    return {
+        pointWrap, pointClamp,
+        linearWrap, linearClamp,
+        anisotropicWrap, anisotropicClamp
+    };
+}
+
+void BuildVertexArray(const std::vector<Shader::FontType>& font, void* data, const char* sentence,
+    float drawX, float drawY, float scaleX, float scaleY)
+{
+    Shader::TextVertex* vertices = (Shader::TextVertex*)data;
+    size_t numLetters = strlen(sentence);
+
+    for (size_t i = 0, k= 0; i < numLetters; ++i, k += 4)
+    {
+        int letter = ((int)sentence[i] - 32);
+
+        if (letter == 0)
+        {
+            drawX += 3.0f + scaleX;
+        }
+        else
+        {
+            // 0 1
+            // 2 3
+
+            // top left
+            vertices[k + 0].Position = DirectX::XMFLOAT3(drawX, drawY, 0.0f);
+            vertices[k + 0].TexCoord = DirectX::XMFLOAT2(font[letter].left, 0.0f);
+
+            // top right
+            vertices[k + 1].Position = DirectX::XMFLOAT3(drawX + font[letter].size + scaleX, drawY, 0.0f);
+            vertices[k + 1].TexCoord = DirectX::XMFLOAT2(font[letter].right, 0.0f);
+
+            // bottom left
+            vertices[k + 2].Position = DirectX::XMFLOAT3(drawX, drawY - scaleY, 0.0f);
+            vertices[k + 2].TexCoord = DirectX::XMFLOAT2(font[letter].left, 0.8f);
+
+            // bottom right
+            vertices[k + 3].Position = DirectX::XMFLOAT3(drawX + font[letter].size + scaleX, drawY - scaleY, 0.0f);
+            vertices[k + 3].TexCoord = DirectX::XMFLOAT2(font[letter].right, 0.8f);
+
+            drawX += font[letter].size + 1.0f + scaleX;
+        }
     }
 }

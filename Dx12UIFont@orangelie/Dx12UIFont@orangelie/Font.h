@@ -6,12 +6,6 @@ namespace orangelie
 {
 	namespace TextFont
 	{
-        struct FontType
-        {
-            float left, right;
-            int size;
-        };
-
-        std::vector<FontType> LoadFontData(const char* filename);
+        std::vector<Shader::FontType> LoadFontData(const char* filename);
 	}
 }

@@ -56,9 +56,6 @@ _Tp& unmove(_Tp&& __value)
 	return __value;
 }
 
-const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
-
-
 namespace Utils
 {
     DirectX::XMFLOAT4X4 MatrixIdentity();
@@ -211,4 +208,20 @@ namespace Shader
 
         D3D12_PRIMITIVE_TOPOLOGY PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     };
+
+    struct FontType
+    {
+        float left, right;
+        int size;
+    };
+
+    struct TextVertex
+    {
+        DirectX::XMFLOAT3 Position;
+        DirectX::XMFLOAT2 TexCoord;
+    };
 }
+
+const std::array<CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+void BuildVertexArray(const std::vector<Shader::FontType>& font, void* data, const char* sentence,
+    float drawX, float drawY, float scaleX, float scaleY);

@@ -60,12 +60,6 @@ namespace orangelie
 				INT cbPerMaterialPadding2;
 			};
 
-			struct TextVertex
-			{
-				DirectX::XMFLOAT3 Position;
-				DirectX::XMFLOAT2 TexCoord;
-			};
-
 			class FrameResource
 			{
 			public:
@@ -80,7 +74,7 @@ namespace orangelie
 				std::unique_ptr<UploadBuffer<ObjectConstants>> mObjCB = nullptr;
 				std::unique_ptr<UploadBuffer<PassConstants>> mPassCB = nullptr;
 				std::unique_ptr<UploadBuffer<MaterialConstants>> mMatVB = nullptr;
-				std::unique_ptr<UploadBuffer<TextVertex>> mTextVB = nullptr;
+				std::unique_ptr<UploadBuffer<Shader::TextVertex>> mTextVB = nullptr;
 
 			};
 		}

@@ -14,7 +14,7 @@ namespace orangelie
 	class Dx12UIFont : public Renderer
 	{
 	private:
-		std::unordered_map<std::string, std::vector<TextFont::FontType>> mFontData;
+		std::unordered_map<std::string, std::vector<Shader::FontType>> mFontData;
 		const static int gMaxNumTextCharacters = 256;
 		Shader::RenderItem* mTextVB = nullptr;
 
@@ -274,7 +274,7 @@ namespace orangelie
 		{
 			mFontData["original"] = TextFont::LoadFontData("fontdata.txt");
 			
-			std::vector<FrameResources::Dx12UIFont::TextVertex> vertices(gMaxNumTextCharacters * 4);
+			std::vector<Shader::TextVertex> vertices(gMaxNumTextCharacters * 4);
 			std::vector<std::uint32_t> indices(gMaxNumTextCharacters * 6);
 
 			for (size_t i = 0, k = 0; i < indices.size(); i += 6, k += 4)
@@ -291,7 +291,7 @@ namespace orangelie
 				indices[i + 5] = (u32)k + 2;
 			}
 
-			UINT vertexBufferSize = sizeof(FrameResources::Dx12UIFont::TextVertex) * (UINT)vertices.size();
+			UINT vertexBufferSize = sizeof(Shader::TextVertex) * (UINT)vertices.size();
 			UINT indexBufferSize = sizeof(std::uint32_t) * (UINT)indices.size();
 
 			auto meshGeometry = std::make_unique<Shader::MeshGeometry>();
@@ -307,7 +307,7 @@ namespace orangelie
 				indices.data(), indexBufferSize, meshGeometry->IndexGpuUploader);
 
 			meshGeometry->VertexBufferByteSize = vertexBufferSize;
-			meshGeometry->VertexByteStride = sizeof(FrameResources::Dx12UIFont::TextVertex);
+			meshGeometry->VertexByteStride = sizeof(Shader::TextVertex);
 
 			meshGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
 			meshGeometry->IndexBufferByteSize = indexBufferSize;
@@ -390,7 +390,7 @@ namespace orangelie
 			HR(mDevice->CreateGraphicsPipelineState(&graphicsPSODescriptor, IID_PPV_ARGS(mGraphicsPSO["opaque"].GetAddressOf())));
 
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC textPSODescriptor = graphicsPSODescriptor;
-			textPSODescriptor.DepthStencilState.DepthEnable = FALSE;
+			textPSODescriptor.DepthStencilState.DepthEnable = TRUE;
 			textPSODescriptor.BlendState.AlphaToCoverageEnable = FALSE;
 			textPSODescriptor.BlendState.IndependentBlendEnable = FALSE;
 			textPSODescriptor.BlendState.RenderTarget[0].BlendEnable = TRUE;
@@ -488,51 +488,27 @@ namespace orangelie
 
 		void UpdateTextVB()
 		{
-			for (int i = 0; i < gMaxNumTextCharacters * 4; ++i)
+			using Shader::TextVertex;
+			
+			const char* sentence = "[ font engine ] hello world - 0xffffffff";
+			int numLetters = (int)strlen(sentence);
+
+			if (numLetters >= gMaxNumTextCharacters)
 			{
-				const char ascii = '#';
-
-				const float left = mFontData["original"][ascii - 32].left;
-				const float right = mFontData["original"][ascii - 32].right;
-
-				if (i == 0) // top left
-				{
-					TextVertex textVertex = {};
-					textVertex.Position = { 0.0f, 0.0f, 0.0f };
-					textVertex.TexCoord = { left, 0.0f };
-
-					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
-				}
-				else if (i == 1) // top right
-				{
-					TextVertex textVertex = {};
-					textVertex.Position = { 30.0f, 0.0f, 0.0f };
-					textVertex.TexCoord = { right, 0.0f };
-
-					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
-				}
-				else if (i == 2) // bottom left
-				{
-					TextVertex textVertex = {};
-					textVertex.Position = { 0.0f, -30.0f, 0.0f };
-					textVertex.TexCoord = { left, 0.7f };
-
-					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
-				}
-				else if (i == 3) // bottom right
-				{
-					TextVertex textVertex = {};
-					textVertex.Position = { 30.0f, -30.0f, 0.0f };
-					textVertex.TexCoord = { right, 0.7f };
-
-					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
-				}
-				else
-				{
-					TextVertex textVertex = {};
-					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
-				}
+				throw std::runtime_error("sentence >= gMaxNumTextCharacters");
 			}
+
+			float positionX = 100.0f, positionY = 100.0f;
+			std::vector<TextVertex> vertices(numLetters * 4);
+			float drawX = (float)(((float)mClientWidth / 2.0f) * -1.0f) + positionX;
+			float drawY = (float)((float)mClientHeight / 2.0f) - positionY;
+			BuildVertexArray(mFontData["original"], vertices.data(), sentence, drawX, drawY, 5.0f, 32.0f);
+
+			for (size_t i = 0; i < vertices.size(); ++i)
+			{
+				mCurrFrameResource->mTextVB->CopyData((UINT)i, vertices[i]);
+			}
+
 
 			mTextVB->meshGeo->VertexGpu = mCurrFrameResource->mTextVB->Resource();
 			mTextVB->NumframeDirty = Shader::gNumFrameResources;

@@ -13,7 +13,7 @@ namespace orangelie
 				mObjCB = std::make_unique<UploadBuffer<ObjectConstants>>(device, objCount, true);
 				mPassCB = std::make_unique<UploadBuffer<PassConstants>>(device, passCount, true);
 				mMatVB = std::make_unique<UploadBuffer<MaterialConstants>>(device, matCount, false);
-				mTextVB = std::make_unique<UploadBuffer<TextVertex>>(device, textCount, false);
+				mTextVB = std::make_unique<UploadBuffer<Shader::TextVertex>>(device, textCount, false);
 			}
 
 			FrameResource::~FrameResource()
