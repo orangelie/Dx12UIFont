@@ -73,7 +73,7 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 # Utility command for shaders
 
 build Dx12UIFont@orangelie\CMakeFiles\shaders.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D C:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie && fxc.exe /nologo /Emain /Tps_5_1 /Od /Zi /Fo C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/shader.cso /Fd C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/shader.pdb Shaders/shader.hlsl"
+  COMMAND = cmd.exe /C "cd /D C:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie && fxc.exe /nologo /Emain /Tps_5_1 /Od /Zi /Fo C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/OpaqueShader.cso /Fd C:/Users/parksangwo/Desktop/Github/Dx12UIFont/Dx12UIFont@orangelie/out/build/x64-debug/Dx12UIFont@orangelie/OpaqueShader.pdb Shaders/OpaqueShader.hlsl"
   DESC = Running utility command for shaders
   restat = 1
 
@@ -142,7 +142,16 @@ build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\GeometryGenerator.cpp.obj: 
   TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\
   TARGET_PDB = Dx12UIFont@orangelie\SimpleCube.pdb
 
-build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\FrameResource.cpp.obj: CXX_COMPILER__SimpleCube_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\FrameResource.cpp || cmake_object_order_depends_target_SimpleCube
+build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Test\FrameResource\SimpleCube\FrameResource.cpp.obj: CXX_COMPILER__SimpleCube_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Test\FrameResource\SimpleCube\FrameResource.cpp || cmake_object_order_depends_target_SimpleCube
+  DEFINES = -DSIMPLECUBE
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\SimpleCube -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\TextFont
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Test\FrameResource\SimpleCube
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\SimpleCube.pdb
+
+build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Camera.cpp.obj: CXX_COMPILER__SimpleCube_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Camera.cpp || cmake_object_order_depends_target_SimpleCube
   DEFINES = -DSIMPLECUBE
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\SimpleCube -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\TextFont
@@ -151,7 +160,7 @@ build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\FrameResource.cpp.obj: CXX_
   TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\
   TARGET_PDB = Dx12UIFont@orangelie\SimpleCube.pdb
 
-build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Camera.cpp.obj: CXX_COMPILER__SimpleCube_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Camera.cpp || cmake_object_order_depends_target_SimpleCube
+build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Font.cpp.obj: CXX_COMPILER__SimpleCube_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Font.cpp || cmake_object_order_depends_target_SimpleCube
   DEFINES = -DSIMPLECUBE
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\SimpleCube -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\TextFont
@@ -168,7 +177,7 @@ build Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Camera.cpp.obj: CXX_COMPILE
 #############################################
 # Link the executable Dx12UIFont@orangelie\SimpleCube.exe
 
-build Dx12UIFont@orangelie\SimpleCube.exe: CXX_EXECUTABLE_LINKER__SimpleCube_Debug Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Utils.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\GameTimer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\GeometryGenerator.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\FrameResource.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Camera.cpp.obj || Dx12UIFont@orangelie\shaders
+build Dx12UIFont@orangelie\SimpleCube.exe: CXX_EXECUTABLE_LINKER__SimpleCube_Debug Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Utils.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\GameTimer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\GeometryGenerator.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Test\FrameResource\SimpleCube\FrameResource.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Camera.cpp.obj Dx12UIFont@orangelie\CMakeFiles\SimpleCube.dir\Font.cpp.obj || Dx12UIFont@orangelie\shaders
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
@@ -243,7 +252,16 @@ build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\GeometryGenerator.cpp.obj: CX
   TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\
   TARGET_PDB = Dx12UIFont@orangelie\TextFont.pdb
 
-build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\FrameResource.cpp.obj: CXX_COMPILER__TextFont_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\FrameResource.cpp || cmake_object_order_depends_target_TextFont
+build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Test\FrameResource\Dx12UIFont\FrameResource.cpp.obj: CXX_COMPILER__TextFont_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Test\FrameResource\Dx12UIFont\FrameResource.cpp || cmake_object_order_depends_target_TextFont
+  DEFINES = -DTEXTFONT
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\SimpleCube -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\TextFont
+  OBJECT_DIR = Dx12UIFont@orangelie\CMakeFiles\TextFont.dir
+  OBJECT_FILE_DIR = Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Test\FrameResource\Dx12UIFont
+  TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\
+  TARGET_PDB = Dx12UIFont@orangelie\TextFont.pdb
+
+build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Camera.cpp.obj: CXX_COMPILER__TextFont_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Camera.cpp || cmake_object_order_depends_target_TextFont
   DEFINES = -DTEXTFONT
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\SimpleCube -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\TextFont
@@ -252,7 +270,7 @@ build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\FrameResource.cpp.obj: CXX_CO
   TARGET_COMPILE_PDB = Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\
   TARGET_PDB = Dx12UIFont@orangelie\TextFont.pdb
 
-build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Camera.cpp.obj: CXX_COMPILER__TextFont_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Camera.cpp || cmake_object_order_depends_target_TextFont
+build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Font.cpp.obj: CXX_COMPILER__TextFont_Debug C$:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\Font.cpp || cmake_object_order_depends_target_TextFont
   DEFINES = -DTEXTFONT
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\SimpleCube -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\.\Dependencies -IC:\Users\parksangwo\Desktop\Github\Dx12UIFont\Dx12UIFont@orangelie\Dx12UIFont@orangelie\TextFont
@@ -269,7 +287,7 @@ build Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Camera.cpp.obj: CXX_COMPILER_
 #############################################
 # Link the executable Dx12UIFont@orangelie\TextFont.exe
 
-build Dx12UIFont@orangelie\TextFont.exe: CXX_EXECUTABLE_LINKER__TextFont_Debug Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Utils.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\GameTimer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\GeometryGenerator.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\FrameResource.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Camera.cpp.obj || Dx12UIFont@orangelie\shaders
+build Dx12UIFont@orangelie\TextFont.exe: CXX_EXECUTABLE_LINKER__TextFont_Debug Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\main.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Dependencies\DDSTextureLoader.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Utils.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Renderer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\GameTimer.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\GeometryGenerator.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Test\FrameResource\Dx12UIFont\FrameResource.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Camera.cpp.obj Dx12UIFont@orangelie\CMakeFiles\TextFont.dir\Font.cpp.obj || Dx12UIFont@orangelie\shaders
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

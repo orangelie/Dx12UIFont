@@ -3,8 +3,10 @@
 #include "Utils.h"
 #include "GameTimer.h"
 #include "GeometryGenerator.h"
-#include "FrameResource.h"
+#include "Test/FrameResource/Dx12UIFont/FrameResource.h"
+#include "Test/FrameResource/SimpleCube/FrameResource.h"
 #include "Camera.h"
+#include "Font.h"
 
 
 namespace orangelie

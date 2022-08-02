@@ -162,26 +162,8 @@ namespace Shader
     enum class RenderLayer : int
     {
         Text = 0,
+        Opaque,
         Count
-    };
-
-    struct RenderItem
-    {
-        RenderItem() = default;
-
-        DirectX::XMFLOAT4X4 World = Utils::MatrixIdentity();
-        DirectX::XMFLOAT4X4 TexTransform = Utils::MatrixIdentity();
-
-        UINT NumframeDirty = gNumFrameResources;
-        UINT ObjIndex;
-
-        MeshGeometry* meshGeo = nullptr;
-
-        UINT IndexCount;
-        UINT StartIndexLocation;
-        INT BaseVertexLocation;
-
-        D3D12_PRIMITIVE_TOPOLOGY PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     };
 
     struct Vertex
@@ -206,5 +188,27 @@ namespace Shader
         DirectX::XMFLOAT4 R0;
         DirectX::XMFLOAT3 DiffuseAlbedo;
         float Roughness;
+
+        UINT SrvTextureIndex;
+    };
+
+    struct RenderItem
+    {
+        RenderItem() = default;
+
+        DirectX::XMFLOAT4X4 World = Utils::MatrixIdentity();
+        DirectX::XMFLOAT4X4 TexTransform = Utils::MatrixIdentity();
+
+        UINT NumframeDirty = gNumFrameResources;
+        UINT ObjIndex;
+
+        MeshGeometry* meshGeo = nullptr;
+        Material* Mat = nullptr;
+
+        UINT IndexCount;
+        UINT StartIndexLocation;
+        INT BaseVertexLocation;
+
+        D3D12_PRIMITIVE_TOPOLOGY PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     };
 }

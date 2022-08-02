@@ -59,14 +59,14 @@
 				{
 					"directoryIndex" : 1,
 					"id" : "SimpleCube::@43de356b483bb7251719",
-					"jsonFile" : "target-SimpleCube-Debug-7680a9975d0098e5d662.json",
+					"jsonFile" : "target-SimpleCube-Debug-4e38f7be6018113654b7.json",
 					"name" : "SimpleCube",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 1,
 					"id" : "TextFont::@43de356b483bb7251719",
-					"jsonFile" : "target-TextFont-Debug-98853f5e2948061e49e9.json",
+					"jsonFile" : "target-TextFont-Debug-0bdd54af999290bc1c93.json",
 					"name" : "TextFont",
 					"projectIndex" : 0
 				},

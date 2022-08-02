@@ -9,9 +9,15 @@
 
 namespace orangelie
 {
+	using namespace FrameResources::Dx12UIFont;
+
 	class Dx12UIFont : public Renderer
 	{
 	private:
+		std::unordered_map<std::string, std::vector<TextFont::FontType>> mFontData;
+		const static int gMaxNumTextCharacters = 256;
+		Shader::RenderItem* mTextVB = nullptr;
+
 		Camera mCamera;
 		std::vector<std::unique_ptr<FrameResource>> mFrameResources;
 		FrameResource* mCurrFrameResource = nullptr;
@@ -19,6 +25,7 @@ namespace orangelie
 
 		std::unordered_map<std::string, std::unique_ptr<Shader::Texture>> mTextures;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
+		std::unordered_map<std::string, std::unique_ptr<Shader::Material>> mMaterials;
 		std::unordered_map<std::string, std::vector<D3D12_INPUT_ELEMENT_DESC>> mInputLayouts;
 		std::unordered_map<std::string, std::unique_ptr<Shader::MeshGeometry>> mDrawArgs;
 		std::vector<std::unique_ptr<Shader::RenderItem>> mAllRenderItems;
@@ -31,17 +38,29 @@ namespace orangelie
 
 		void BuildTexture()
 		{
-			auto tempTexture = std::make_unique<Shader::Texture>();
-			tempTexture->name = "text";
-			tempTexture->fileName = L"Text.png";
+			auto textTexture = std::make_unique<Shader::Texture>();
+			textTexture->name = "text";
+			textTexture->fileName = L"text.png";
 
 			HR(WICConverter::CreateWICTextureFromFile12(mDevice.Get(),
 				mGraphicsCommandList.Get(),
-				tempTexture->fileName.c_str(),
-				tempTexture->ResourceGpuHeap,
-				tempTexture->UploadGpuHeap));
+				textTexture->fileName.c_str(),
+				textTexture->ResourceGpuHeap,
+				textTexture->UploadGpuHeap));
 
-			mTextures[tempTexture->name] = std::move(tempTexture);
+			mTextures[textTexture->name] = std::move(textTexture);
+
+			auto woodTexture = std::make_unique<Shader::Texture>();
+			woodTexture->name = "wood";
+			woodTexture->fileName = L"wood.png";
+
+			HR(WICConverter::CreateWICTextureFromFile12(mDevice.Get(),
+				mGraphicsCommandList.Get(),
+				woodTexture->fileName.c_str(),
+				woodTexture->ResourceGpuHeap,
+				woodTexture->UploadGpuHeap));
+
+			mTextures[woodTexture->name] = std::move(woodTexture);
 
 			/*
 			HR(DirectX::CreateDDSTextureFromFile12(mDevice.Get(),
@@ -55,7 +74,7 @@ namespace orangelie
 		void BuildRootSignature()
 		{
 			CD3DX12_DESCRIPTOR_RANGE srvRange;
-			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0);
+			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0, 0);
 
 			constexpr const size_t parameterSize = 3;
 			CD3DX12_ROOT_PARAMETER rootParameter[parameterSize];
@@ -88,7 +107,7 @@ namespace orangelie
 			D3D12_DESCRIPTOR_HEAP_DESC srvHeapDescriptor = {};
 			srvHeapDescriptor.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 			srvHeapDescriptor.NodeMask = 0;
-			srvHeapDescriptor.NumDescriptors = 1;
+			srvHeapDescriptor.NumDescriptors = 2;
 			srvHeapDescriptor.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
 			HR(mDevice->CreateDescriptorHeap(&srvHeapDescriptor, IID_PPV_ARGS(mSrvHeap.GetAddressOf())));
@@ -106,6 +125,14 @@ namespace orangelie
 
 			mDevice->CreateShaderResourceView(textTexture.Get(), &srViewDescriptor, srvHandle);
 			srvHandle.Offset(1, mCbvSrvUavSize);
+
+
+			auto woodTexture = mTextures["wood"].get()->ResourceGpuHeap;
+			srViewDescriptor.Format = woodTexture->GetDesc().Format;
+			srViewDescriptor.Texture2D.MipLevels = woodTexture->GetDesc().MipLevels;
+
+			mDevice->CreateShaderResourceView(woodTexture.Get(), &srViewDescriptor, srvHandle);
+			srvHandle.Offset(1, mCbvSrvUavSize);
 		}
 
 		void BuildShadersAndInputLayout()
@@ -116,8 +143,10 @@ namespace orangelie
 				NULL, NULL
 			};
 
-			mShaders["vs"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "VS", "vs_5_1");
-			mShaders["ps"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "PS", "ps_5_1");
+			mShaders["vs"] = Utils::CompileShader(L"OpaqueShader.hlsl", shaderMacro, "VS", "vs_5_1");
+			mShaders["ps"] = Utils::CompileShader(L"OpaqueShader.hlsl", shaderMacro, "PS", "ps_5_1");
+			mShaders["text_vs"] = Utils::CompileShader(L"TextShader.hlsl", shaderMacro, "VS", "vs_5_1");
+			mShaders["text_ps"] = Utils::CompileShader(L"TextShader.hlsl", shaderMacro, "PS", "ps_5_1");
 
 			mInputLayouts["layout1"] = {
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -125,6 +154,24 @@ namespace orangelie
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 				{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 			};
+
+			mInputLayouts["layout2"] = {
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+			};
+		}
+
+		void BuildMaterial()
+		{
+			auto text = std::make_unique<Shader::Material>();
+			text->SrvTextureIndex = 0;
+
+			mMaterials["text"] = std::move(text);
+
+			auto wood = std::make_unique<Shader::Material>();
+			wood->SrvTextureIndex = 1;
+
+			mMaterials["wood"] = std::move(wood);
 		}
 
 		void BuildQuadMesh()
@@ -223,31 +270,99 @@ namespace orangelie
 			mDrawArgs[meshGeometry->name] = std::move(meshGeometry);
 		}
 
+		void BuildFont()
+		{
+			mFontData["original"] = TextFont::LoadFontData("fontdata.txt");
+			
+			std::vector<FrameResources::Dx12UIFont::TextVertex> vertices(gMaxNumTextCharacters * 4);
+			std::vector<std::uint32_t> indices(gMaxNumTextCharacters * 6);
+
+			for (size_t i = 0, k = 0; i < indices.size(); i += 6, k += 4)
+			{
+				// 0 1
+				// 2 3
+
+				indices[i + 0] = (u32)k + 0;
+				indices[i + 1] = (u32)k + 1;
+				indices[i + 2] = (u32)k + 2;
+
+				indices[i + 3] = (u32)k + 1;
+				indices[i + 4] = (u32)k + 3;
+				indices[i + 5] = (u32)k + 2;
+			}
+
+			UINT vertexBufferSize = sizeof(FrameResources::Dx12UIFont::TextVertex) * (UINT)vertices.size();
+			UINT indexBufferSize = sizeof(std::uint32_t) * (UINT)indices.size();
+
+			auto meshGeometry = std::make_unique<Shader::MeshGeometry>();
+			meshGeometry->name = "textGeo";
+
+			meshGeometry->VertexCpu = nullptr;
+			meshGeometry->VertexGpu = nullptr;
+
+			HR(D3DCreateBlob(indexBufferSize, meshGeometry->IndexCpu.GetAddressOf()));
+			CopyMemory(meshGeometry->IndexCpu->GetBufferPointer(), indices.data(), indexBufferSize);
+
+			meshGeometry->IndexGpu = Utils::CreateDefaultResource(mDevice.Get(), mGraphicsCommandList.Get(),
+				indices.data(), indexBufferSize, meshGeometry->IndexGpuUploader);
+
+			meshGeometry->VertexBufferByteSize = vertexBufferSize;
+			meshGeometry->VertexByteStride = sizeof(FrameResources::Dx12UIFont::TextVertex);
+
+			meshGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
+			meshGeometry->IndexBufferByteSize = indexBufferSize;
+
+			Shader::SubmeshGeometry subMeshGeo = {};
+			subMeshGeo.IndexCount = (UINT)indices.size();
+			subMeshGeo.BaseVertexLocation = 0;
+			subMeshGeo.StartIndexLocation = 0;
+
+			meshGeometry->DrawArgs["text"] = subMeshGeo;
+
+			mDrawArgs[meshGeometry->name] = std::move(meshGeometry);
+		}
+
 		void BuildRenderItems()
 		{
 			auto quadRitem = std::make_unique<Shader::RenderItem>();
 			quadRitem->ObjIndex = 0;
-			DirectX::XMStoreFloat4x4(&quadRitem->World, DirectX::XMMatrixRotationY(60.0f) * DirectX::XMMatrixTranslation(0.0f, 0.0, 50.0f));
+			DirectX::XMStoreFloat4x4(&quadRitem->World, DirectX::XMMatrixTranslation(0.0f, 0.0f, 30.0f));
 			quadRitem->TexTransform = Utils::MatrixIdentity();
+			quadRitem->Mat = mMaterials["wood"].get();
 			quadRitem->meshGeo = mDrawArgs["shapeSub"].get();
 			quadRitem->IndexCount = quadRitem->meshGeo->DrawArgs["box"].IndexCount;
 			quadRitem->BaseVertexLocation = quadRitem->meshGeo->DrawArgs["box"].BaseVertexLocation;
 			quadRitem->StartIndexLocation = quadRitem->meshGeo->DrawArgs["box"].StartIndexLocation;
 			quadRitem->PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-			mRenderLayer[(size_t)Shader::RenderLayer::Text].push_back(quadRitem.get());
+			mRenderLayer[(size_t)Shader::RenderLayer::Opaque].push_back(quadRitem.get());
 			mAllRenderItems.push_back(std::move(quadRitem));
+
+			auto textRitem = std::make_unique<Shader::RenderItem>();
+			textRitem->ObjIndex = 1;
+			textRitem->TexTransform = Utils::MatrixIdentity();
+			textRitem->Mat = mMaterials["text"].get();
+			textRitem->meshGeo = mDrawArgs["textGeo"].get();
+			textRitem->IndexCount = textRitem->meshGeo->DrawArgs["text"].IndexCount;
+			textRitem->BaseVertexLocation = textRitem->meshGeo->DrawArgs["text"].BaseVertexLocation;
+			textRitem->StartIndexLocation = textRitem->meshGeo->DrawArgs["text"].StartIndexLocation;
+			textRitem->PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+			mTextVB = textRitem.get();
+			mRenderLayer[(size_t)Shader::RenderLayer::Text].push_back(textRitem.get());
+			mAllRenderItems.push_back(std::move(textRitem));
 		}
 
 		void BuildFrameResources()
 		{
 			for (int i = 0; i < Shader::gNumFrameResources; ++i)
 			{
-				mFrameResources.push_back(std::make_unique<FrameResource>(mDevice.Get(), 1, (UINT)mAllRenderItems.size(), 1));
+				mFrameResources.push_back(std::make_unique<FrameResource>(mDevice.Get(),
+					1, (UINT)mAllRenderItems.size(), 1, gMaxNumTextCharacters * 4));
 			}
 		}
 
-		void BuildPSO()
+		void BuildPSOs()
 		{
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPSODescriptor = {};
 			graphicsPSODescriptor.NodeMask = 0;
@@ -273,6 +388,47 @@ namespace orangelie
 			};
 
 			HR(mDevice->CreateGraphicsPipelineState(&graphicsPSODescriptor, IID_PPV_ARGS(mGraphicsPSO["opaque"].GetAddressOf())));
+
+			D3D12_GRAPHICS_PIPELINE_STATE_DESC textPSODescriptor = graphicsPSODescriptor;
+			textPSODescriptor.DepthStencilState.DepthEnable = FALSE;
+			textPSODescriptor.BlendState.AlphaToCoverageEnable = FALSE;
+			textPSODescriptor.BlendState.IndependentBlendEnable = FALSE;
+			textPSODescriptor.BlendState.RenderTarget[0].BlendEnable = TRUE;
+
+			textPSODescriptor.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			textPSODescriptor.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+			textPSODescriptor.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_ALPHA;
+			textPSODescriptor.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+			textPSODescriptor.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			textPSODescriptor.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			textPSODescriptor.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			textPSODescriptor.DepthStencilState.DepthEnable = false;
+			textPSODescriptor.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+			textPSODescriptor.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+			textPSODescriptor.DepthStencilState.StencilEnable = true;
+			textPSODescriptor.DepthStencilState.StencilReadMask = 0xFF;
+			textPSODescriptor.DepthStencilState.StencilWriteMask = 0xFF;
+			textPSODescriptor.DepthStencilState.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+			textPSODescriptor.DepthStencilState.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_INCR;
+			textPSODescriptor.DepthStencilState.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+			textPSODescriptor.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+			textPSODescriptor.DepthStencilState.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+			textPSODescriptor.DepthStencilState.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_DECR;
+			textPSODescriptor.DepthStencilState.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+			textPSODescriptor.DepthStencilState.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+			textPSODescriptor.InputLayout = { mInputLayouts["layout2"].data(), (UINT)mInputLayouts["layout2"].size() };
+			textPSODescriptor.VS = {
+				reinterpret_cast<BYTE*>(mShaders["text_vs"]->GetBufferPointer()),
+				mShaders["text_vs"]->GetBufferSize()
+			};
+			textPSODescriptor.PS = {
+				reinterpret_cast<BYTE*>(mShaders["text_ps"]->GetBufferPointer()),
+				mShaders["text_ps"]->GetBufferSize()
+			};
+
+			HR(mDevice->CreateGraphicsPipelineState(&textPSODescriptor, IID_PPV_ARGS(mGraphicsPSO["text"].GetAddressOf())));
 		}
 
 		void UpdateObjectCB()
@@ -284,6 +440,7 @@ namespace orangelie
 					ObjectConstants objConstants = {};
 					DirectX::XMStoreFloat4x4(&objConstants.World, DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&e->World)));
 					DirectX::XMStoreFloat4x4(&objConstants.TexTransform, DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&e->TexTransform)));
+					objConstants.MatIndex = e->Mat->SrvTextureIndex;
 
 					mCurrFrameResource->mObjCB->CopyData(e->ObjIndex, objConstants);
 
@@ -298,6 +455,12 @@ namespace orangelie
 			DirectX::XMMATRIX Proj = DirectX::XMLoadFloat4x4(&mCamera.Projection());
 			DirectX::XMMATRIX ViewProj = DirectX::XMMatrixMultiply(View, Proj);
 
+			DirectX::XMMATRIX ViewOrtho = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixLookAtLH(DirectX::XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
+					DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f)
+				, DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f)),
+				DirectX::XMMatrixOrthographicLH((float)mClientWidth, (float)mClientHeight, 1.0f, 1000.0f));
+
 			PassConstants passConstants = {};
 			DirectX::XMStoreFloat4x4(&passConstants.View, DirectX::XMMatrixTranspose(View));
 			DirectX::XMStoreFloat4x4(&passConstants.InvView, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&DirectX::XMMatrixDeterminant(View), View)));
@@ -305,6 +468,7 @@ namespace orangelie
 			DirectX::XMStoreFloat4x4(&passConstants.InvProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&DirectX::XMMatrixDeterminant(Proj), Proj)));
 			DirectX::XMStoreFloat4x4(&passConstants.ViewProj, DirectX::XMMatrixTranspose(ViewProj));
 			DirectX::XMStoreFloat4x4(&passConstants.InvViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&DirectX::XMMatrixDeterminant(ViewProj), ViewProj)));
+			DirectX::XMStoreFloat4x4(&passConstants.ViewOrtho, DirectX::XMMatrixTranspose(ViewOrtho));
 			passConstants.EyePos = { 0.0f, 0.0f, 0.0f };
 			passConstants.DeltaTime = mGameTimer.DeltaTime();
 			passConstants.TotalTime = mGameTimer.TotalTime();
@@ -317,7 +481,61 @@ namespace orangelie
 			passConstants.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
 			passConstants.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
 
+			passConstants.Color = { 0.0f, 1.0f, 1.0f, 1.0f };
+
 			mCurrFrameResource->mPassCB->CopyData(0, passConstants);
+		}
+
+		void UpdateTextVB()
+		{
+			for (int i = 0; i < gMaxNumTextCharacters * 4; ++i)
+			{
+				const char ascii = '#';
+
+				const float left = mFontData["original"][ascii - 32].left;
+				const float right = mFontData["original"][ascii - 32].right;
+
+				if (i == 0) // top left
+				{
+					TextVertex textVertex = {};
+					textVertex.Position = { 0.0f, 0.0f, 0.0f };
+					textVertex.TexCoord = { left, 0.0f };
+
+					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
+				}
+				else if (i == 1) // top right
+				{
+					TextVertex textVertex = {};
+					textVertex.Position = { 30.0f, 0.0f, 0.0f };
+					textVertex.TexCoord = { right, 0.0f };
+
+					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
+				}
+				else if (i == 2) // bottom left
+				{
+					TextVertex textVertex = {};
+					textVertex.Position = { 0.0f, -30.0f, 0.0f };
+					textVertex.TexCoord = { left, 0.7f };
+
+					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
+				}
+				else if (i == 3) // bottom right
+				{
+					TextVertex textVertex = {};
+					textVertex.Position = { 30.0f, -30.0f, 0.0f };
+					textVertex.TexCoord = { right, 0.7f };
+
+					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
+				}
+				else
+				{
+					TextVertex textVertex = {};
+					mCurrFrameResource->mTextVB->CopyData(i, textVertex);
+				}
+			}
+
+			mTextVB->meshGeo->VertexGpu = mCurrFrameResource->mTextVB->Resource();
+			mTextVB->NumframeDirty = Shader::gNumFrameResources;
 		}
 
 		void DrawRitems(const std::vector<Shader::RenderItem*>& rItems)
@@ -362,11 +580,13 @@ namespace orangelie
 			BuildRootSignature();
 			BuildDescriptor();
 			BuildShadersAndInputLayout();
+			BuildMaterial();
 			BuildQuadMesh();
 			BuildBoxMesh();
+			BuildFont();
 			BuildRenderItems();
 			BuildFrameResources();
-			BuildPSO();
+			BuildPSOs();
 
 			HR(mGraphicsCommandList->Close());
 			ID3D12CommandList* cmdLists[] = { mGraphicsCommandList.Get() };
@@ -392,6 +612,7 @@ namespace orangelie
 
 			UpdateObjectCB();
 			UpdatePassCB();
+			UpdateTextVB();
 		}
 
 		virtual void draw(float dt) override
@@ -422,6 +643,8 @@ namespace orangelie
 			mGraphicsCommandList->RSSetScissorRects(1, &mScissorRect);
 			mGraphicsCommandList->RSSetViewports(1, &mViewPort);
 
+			DrawRitems(mRenderLayer[(int)Shader::RenderLayer::Opaque]);
+			mGraphicsCommandList->SetPipelineState(mGraphicsPSO["text"].Get());
 			DrawRitems(mRenderLayer[(int)Shader::RenderLayer::Text]);
 
 			mGraphicsCommandList->ResourceBarrier(1,

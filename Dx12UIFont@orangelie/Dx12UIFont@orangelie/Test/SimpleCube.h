@@ -9,6 +9,8 @@
 
 namespace orangelie
 {
+	using namespace FrameResources::SimpleCube;
+
 	class SimpleCube : public Renderer
 	{
 	private:
@@ -19,6 +21,7 @@ namespace orangelie
 
 		std::unordered_map<std::string, std::unique_ptr<Shader::Texture>> mTextures;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>> mShaders;
+		std::unordered_map<std::string, std::unique_ptr<Shader::Material>> mMaterials;
 		std::unordered_map<std::string, std::vector<D3D12_INPUT_ELEMENT_DESC>> mInputLayouts;
 		std::unordered_map<std::string, std::unique_ptr<Shader::MeshGeometry>> mDrawArgs;
 		std::vector<std::unique_ptr<Shader::RenderItem>> mAllRenderItems;
@@ -32,8 +35,8 @@ namespace orangelie
 		void BuildTexture()
 		{
 			auto tempTexture = std::make_unique<Shader::Texture>();
-			tempTexture->name = "text";
-			tempTexture->fileName = L"Text.png";
+			tempTexture->name = "wood";
+			tempTexture->fileName = L"wood.png";
 
 			HR(WICConverter::CreateWICTextureFromFile12(mDevice.Get(),
 				mGraphicsCommandList.Get(),
@@ -55,7 +58,7 @@ namespace orangelie
 		void BuildRootSignature()
 		{
 			CD3DX12_DESCRIPTOR_RANGE srvRange;
-			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0);
+			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0, 0);
 
 			constexpr const size_t parameterSize = 3;
 			CD3DX12_ROOT_PARAMETER rootParameter[parameterSize];
@@ -82,13 +85,13 @@ namespace orangelie
 			HR(mDevice->CreateRootSignature(0,
 				ppBlob->GetBufferPointer(), ppBlob->GetBufferSize(), IID_PPV_ARGS(mRootSignatrue.GetAddressOf())));
 		}
-		 
+
 		void BuildDescriptor()
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC srvHeapDescriptor = {};
 			srvHeapDescriptor.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 			srvHeapDescriptor.NodeMask = 0;
-			srvHeapDescriptor.NumDescriptors = 1;
+			srvHeapDescriptor.NumDescriptors = 2;
 			srvHeapDescriptor.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
 			HR(mDevice->CreateDescriptorHeap(&srvHeapDescriptor, IID_PPV_ARGS(mSrvHeap.GetAddressOf())));
@@ -99,8 +102,15 @@ namespace orangelie
 			srViewDescriptor.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 			srViewDescriptor.Texture2D.MostDetailedMip = 0;
 			srViewDescriptor.Texture2D.ResourceMinLODClamp = 0.0f;
-			
-			auto textTexture = mTextures["text"].get()->ResourceGpuHeap;
+
+			auto textTexture = mTextures["wood"].get()->ResourceGpuHeap;
+			srViewDescriptor.Format = textTexture->GetDesc().Format;
+			srViewDescriptor.Texture2D.MipLevels = textTexture->GetDesc().MipLevels;
+
+			mDevice->CreateShaderResourceView(textTexture.Get(), &srViewDescriptor, srvHandle);
+			srvHandle.Offset(1, mCbvSrvUavSize);
+
+			textTexture = mTextures["wood"].get()->ResourceGpuHeap;
 			srViewDescriptor.Format = textTexture->GetDesc().Format;
 			srViewDescriptor.Texture2D.MipLevels = textTexture->GetDesc().MipLevels;
 
@@ -116,8 +126,8 @@ namespace orangelie
 				NULL, NULL
 			};
 
-			mShaders["vs"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "VS", "vs_5_1");
-			mShaders["ps"] = Utils::CompileShader(L"shader.hlsl", shaderMacro, "PS", "ps_5_1");
+			mShaders["vs"] = Utils::CompileShader(L"OpaqueShader.hlsl", shaderMacro, "VS", "vs_5_1");
+			mShaders["ps"] = Utils::CompileShader(L"OpaqueShader.hlsl", shaderMacro, "PS", "ps_5_1");
 
 			mInputLayouts["layout1"] = {
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -125,6 +135,14 @@ namespace orangelie
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 				{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 			};
+		}
+
+		void BuildMaterial()
+		{
+			auto wood = std::make_unique<Shader::Material>();
+			wood->SrvTextureIndex = 0;
+
+			mMaterials["wood"] = std::move(wood);
 		}
 
 		void BuildQuadMesh()
@@ -227,7 +245,8 @@ namespace orangelie
 		{
 			auto quadRitem = std::make_unique<Shader::RenderItem>();
 			quadRitem->ObjIndex = 0;
-			DirectX::XMStoreFloat4x4(&quadRitem->World, DirectX::XMMatrixRotationY(60.0f) * DirectX::XMMatrixTranslation(0.0f, 0.0, 50.0f));
+			DirectX::XMStoreFloat4x4(&quadRitem->World, DirectX::XMMatrixTranslation(0.0f, 0.0f, 50.0f));
+			quadRitem->Mat = mMaterials["wood"].get();
 			quadRitem->TexTransform = Utils::MatrixIdentity();
 			quadRitem->meshGeo = mDrawArgs["shapeSub"].get();
 			quadRitem->IndexCount = quadRitem->meshGeo->DrawArgs["box"].IndexCount;
@@ -235,7 +254,7 @@ namespace orangelie
 			quadRitem->StartIndexLocation = quadRitem->meshGeo->DrawArgs["box"].StartIndexLocation;
 			quadRitem->PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-			mRenderLayer[(size_t)Shader::RenderLayer::Text].push_back(quadRitem.get());
+			mRenderLayer[(size_t)Shader::RenderLayer::Opaque].push_back(quadRitem.get());
 			mAllRenderItems.push_back(std::move(quadRitem));
 		}
 
@@ -284,6 +303,7 @@ namespace orangelie
 					ObjectConstants objConstants = {};
 					DirectX::XMStoreFloat4x4(&objConstants.World, DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&e->World)));
 					DirectX::XMStoreFloat4x4(&objConstants.TexTransform, DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&e->TexTransform)));
+					objConstants.MatIndex = e->Mat->SrvTextureIndex;
 
 					mCurrFrameResource->mObjCB->CopyData(e->ObjIndex, objConstants);
 
@@ -362,6 +382,7 @@ namespace orangelie
 			BuildRootSignature();
 			BuildDescriptor();
 			BuildShadersAndInputLayout();
+			BuildMaterial();
 			BuildQuadMesh();
 			BuildBoxMesh();
 			BuildRenderItems();
@@ -422,7 +443,7 @@ namespace orangelie
 			mGraphicsCommandList->RSSetScissorRects(1, &mScissorRect);
 			mGraphicsCommandList->RSSetViewports(1, &mViewPort);
 
-			DrawRitems(mRenderLayer[(int)Shader::RenderLayer::Text]);
+			DrawRitems(mRenderLayer[(int)Shader::RenderLayer::Opaque]);
 
 			mGraphicsCommandList->ResourceBarrier(1,
 				&unmove(CD3DX12_RESOURCE_BARRIER::Transition(mBackBuffer[mCurrBackBufferIndex].Get(),

@@ -3,8 +3,12 @@
     "",
     "\\Dx12UIFont@orangelie",
     "\\Dx12UIFont@orangelie\\Shaders",
-    "\\Dx12UIFont@orangelie\\Test"
+    "\\Dx12UIFont@orangelie\\Test",
+    "\\Dx12UIFont@orangelie\\Test\\FrameResource",
+    "\\Dx12UIFont@orangelie\\Test\\FrameResource\\Dx12UIFont",
+    "\\Dx12UIFont@orangelie\\Test\\FrameResource\\SimpleCube",
+    "\\Dx12UIFont@orangelie\\Textures"
   ],
-  "SelectedNode": "\\Dx12UIFont@orangelie\\main.cpp",
+  "SelectedNode": "\\Dx12UIFont@orangelie\\Test\\FrameResource\\Dx12UIFont\\FrameResource.cpp",
   "PreviewInSolutionExplorer": false
 }
