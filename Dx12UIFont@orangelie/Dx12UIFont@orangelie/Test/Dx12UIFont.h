@@ -490,19 +490,19 @@ namespace orangelie
 		{
 			using Shader::TextVertex;
 			
-			const char* sentence = "[ font engine ] hello world - 0xffffffff";
-			int numLetters = (int)strlen(sentence);
+			std::string sentence = "GameTime: " + std::to_string(mGameTimer.TotalTime()) + " seconds";
+			int numLetters = (int)sentence.size();
 
 			if (numLetters >= gMaxNumTextCharacters)
 			{
 				throw std::runtime_error("sentence >= gMaxNumTextCharacters");
 			}
 
-			float positionX = 100.0f, positionY = 100.0f;
+			float positionX = 10.0f, positionY = 10.0f;
 			std::vector<TextVertex> vertices(numLetters * 4);
 			float drawX = (float)(((float)mClientWidth / 2.0f) * -1.0f) + positionX;
 			float drawY = (float)((float)mClientHeight / 2.0f) - positionY;
-			BuildVertexArray(mFontData["original"], vertices.data(), sentence, drawX, drawY, 5.0f, 32.0f);
+			BuildVertexArray(mFontData["original"], vertices.data(), sentence.c_str(), drawX, drawY, 3.0f, 32.0f);
 
 			for (size_t i = 0; i < vertices.size(); ++i)
 			{

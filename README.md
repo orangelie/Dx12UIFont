@@ -10,7 +10,8 @@ Based on DirectX12, ***it is a simple project to customize the font directly*** 
  
  <br></br>
 # 📋 How to Use? 📋  
-...
+**[ WASD ]**: XZ Movement.  
+**[ L Mouse ]**: View Rotation.  
 
 
 <br></br>
