@@ -1,13 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Dx12UIFont@orangelie",
-    "\\Dx12UIFont@orangelie\\Shaders",
-    "\\Dx12UIFont@orangelie\\Test",
-    "\\Dx12UIFont@orangelie\\Test\\FrameResource",
-    "\\Dx12UIFont@orangelie\\Test\\FrameResource\\Dx12UIFont",
-    "\\Dx12UIFont@orangelie\\Test\\FrameResource\\SimpleCube",
-    "\\Dx12UIFont@orangelie\\Textures"
+    "\\Dx12UIFont@orangelie"
   ],
+  "SelectedNode": "\\Dx12UIFont@orangelie\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }
