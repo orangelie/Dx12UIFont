@@ -95,7 +95,7 @@ float4 PS(VertexOut vin) : SV_TARGET
 	}
 	else
 	{
-		color.rgb = wood.rgb;
+		color.rgb = color.rgb;
 		color.a = 1.0f;
 	}
 

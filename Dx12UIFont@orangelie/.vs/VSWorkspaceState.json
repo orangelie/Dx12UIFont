@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Dx12UIFont@orangelie"
+    "\\Dx12UIFont@orangelie",
+    "\\Dx12UIFont@orangelie\\Shaders"
   ],
-  "SelectedNode": "\\Dx12UIFont@orangelie\\CMakeLists.txt",
+  "SelectedNode": "\\Dx12UIFont@orangelie\\Shaders\\TextShader.hlsl",
   "PreviewInSolutionExplorer": false
 }
